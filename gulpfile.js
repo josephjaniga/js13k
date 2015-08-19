@@ -12,10 +12,10 @@ var gulp = require('gulp'),
     // the filepath setup
     _DATESTAMP_ = Date.now(),
     CORE_SOURCE = ['core/*.js'],
-    CORE_DEST = 'build/'+_DATESTAMP_+'/core/',
+    CORE_DEST = 'build/core/',
     INDEX_SOURCE = 'index.html',
-    INDEX_DEST = 'build/'+_DATESTAMP_+'/',
-    ZIP_SOURCE = ['build/'+_DATESTAMP_+'/'],
+    INDEX_DEST = 'build/',
+    ZIP_SOURCE = ['build/'],
     ZIP_DEST = 'zip/';
 
 gulp.task('default', ['buildCompressed']);
@@ -27,25 +27,25 @@ gulp.task('default', ['buildCompressed']);
  *  uglify - min.js
  *  minifyHTML
  */
-gulp.task('buildCompressed', ['buildCore', 'buildIndex', 'zip'])
+gulp.task('buildCompressed', ['clean', 'buildCore', 'buildIndex', 'zip'])
 
 gulp.task('clean', ['cleanZips', 'cleanBuild']);
 
-gulp.task('cleanZips', function(){
-    del(['zip/*.zip']);
+gulp.task('cleanZips', function(cb){
+    del(['zip/*.zip'], cb);
 });
 
-gulp.task('cleanBuild', function(){
-    del(['build/*']);
+gulp.task('cleanBuild', function(cb){
+    del(['build/*'], cb);
 });
 
-gulp.task('buildIndex', function(cb) {
+gulp.task('buildIndex', ['clean'], function(cb) {
     return gulp.src(INDEX_SOURCE)
         .pipe(minifyHTML({conditionals:true, spare:true}))
         .pipe(gulp.dest(INDEX_DEST));
 });
 
-gulp.task('buildCore', function(cb) {
+gulp.task('buildCore', ['clean'], function(cb) {
     return gulp.src(CORE_SOURCE)
         .pipe(babel())
         .pipe(concat('core.es5.js'))
