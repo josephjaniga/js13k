@@ -8,17 +8,23 @@ var gulp = require('gulp'),
     del = require('del'),
     babel = require('gulp-babel'),
     concat = require('gulp-concat'),
+    env = require('gulp-env'),
 
     // the filepath setup
-    _DATESTAMP_ = Date.now(),
-    CORE_SOURCE = ['core/*.js'],
-    CORE_DEST = 'build/core/',
-    INDEX_SOURCE = 'index.html',
-    INDEX_DEST = 'build/',
-    ZIP_SOURCE = ['build/'],
-    ZIP_DEST = 'zip/';
+    _DATESTAMP_     = Date.now(),
+    CORE_SOURCE     = ['core/*.js'],
+    CORE_DEST       = 'build/core/',
+    INDEX_SOURCE    = 'index.html',
+    INDEX_DEST      = 'build/',
+    ZIP_SOURCE      = ['build/'],
+    ZIP_DEST        = 'zip/';
 
-gulp.task('default', ['buildCompressed']);
+gulp.task('set-env', function(){
+    env({"file": ".env.json"});
+    console.log(process.env.environment);
+});
+
+gulp.task('default', ['set-env', 'buildCompressed']);
 
 /**
  * BUILD
@@ -27,7 +33,7 @@ gulp.task('default', ['buildCompressed']);
  *  uglify - min.js
  *  minifyHTML
  */
-gulp.task('buildCompressed', ['clean', 'buildCore', 'buildIndex', 'zip'])
+gulp.task('buildCompressed', ['clean', 'buildCore', 'buildIndex', 'zip']);
 
 gulp.task('clean', ['cleanZips', 'cleanBuild']);
 
