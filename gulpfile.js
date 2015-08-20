@@ -8,7 +8,7 @@ var gulp        = require('gulp'),
     del         = require('del'),
     babel       = require('gulp-babel'),
     concat      = require('gulp-concat'),
-    env         = require('gulp-env'),
+    //env         = require('gulp-env'),
     watch       = require('gulp-watch'),
     size        = require('gulp-size'),
     notify      = require('gulp-notify'),
@@ -23,12 +23,12 @@ var gulp        = require('gulp'),
     ZIP_SOURCE      = ['build/'],
     ZIP_DEST        = 'zip/';
 
-gulp.task('set-env', function(){
-    env({"file": ".env.json"});
-    console.log(process.env.environment);
-});
+//gulp.task('set-env', function(){
+//    env({"file": ".env.json"});
+//    console.log(process.env.environment);
+//});
 
-gulp.task('default', ['set-env', 'buildCompressed']);
+gulp.task('default', ['buildCompressed']);
 
 /**
  * BUILD DEVELOPMENT
@@ -37,11 +37,11 @@ gulp.task('default', ['set-env', 'buildCompressed']);
 gulp.task('watch', function(){
     var TOTAL_SOURCE = [CORE_SOURCE[0], '!core/core.es5.min.js'];
     watch(TOTAL_SOURCE, function(){
-        del("core/core.es5.min.js");
+        del(["core/core.es5.min.js"]);
         return gulp.src(TOTAL_SOURCE)
             .pipe(babel())
             .pipe(concat('core.es5.min.js'))
-            .pipe(uglify())
+            //.pipe(uglify())
             .pipe(gulp.dest(DEV_CORE_DEST));
     });
 });
@@ -63,6 +63,7 @@ gulp.task('cleanZips', function(cb){
 });
 
 gulp.task('cleanBuild', function(cb){
+    del(["core/core.es5.min.js"]);
     del(['build/*'], cb);
 });
 
@@ -76,6 +77,7 @@ gulp.task('buildCore', ['clean'], function(cb) {
     return gulp.src(CORE_SOURCE)
         .pipe(babel())
         .pipe(concat('core.es5.min.js'))
+        .pipe(gulp.dest(DEV_CORE_DEST))
         .pipe(uglify())
         .pipe(gulp.dest(CORE_DEST));
 });
