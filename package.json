@@ -1,7 +1,7 @@
 {
   "name": "js13k-2015",
   "version": "1.0.0",
-  "description": "js13k compo",
+  "description": "js13k 2015 compo",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,18 +9,17 @@
   "author": "Joe Janiga",
   "repository": "",
   "devDependencies": {
+    "babelify": "^6.2.0",
+    "browserify": "^11.0.1",
     "del": "^1.2.1",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.0",
     "gulp-concat": "^2.6.0",
-    "gulp-env": "^0.2.0",
     "gulp-minify-html": "^1.0.4",
-    "gulp-notify": "^2.2.0",
-    "gulp-regex-replace": "^0.2.3",
-    "gulp-rename": "^1.2.2",
     "gulp-size": "^2.0.0",
     "gulp-uglify": "^1.2.0",
     "gulp-watch": "^4.3.5",
-    "gulp-zip": "^3.0.2"
+    "gulp-zip": "^3.0.2",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

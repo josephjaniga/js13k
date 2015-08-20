@@ -1,32 +1,28 @@
 'use strict';
 
-var gulp        = require('gulp'),
-    rename      = require('gulp-rename'),
-    uglify      = require('gulp-uglify'),
-    minifyHTML  = require('gulp-minify-html'),
-    zip         = require('gulp-zip'),
+var babelify    = require('babelify'),
+    browserify  = require('browserify'),
     del         = require('del'),
+    gulp        = require('gulp'),
     babel       = require('gulp-babel'),
     concat      = require('gulp-concat'),
-    //env         = require('gulp-env'),
-    watch       = require('gulp-watch'),
+    minifyHTML  = require('gulp-minify-html'),
     size        = require('gulp-size'),
-    notify      = require('gulp-notify'),
+    uglify      = require('gulp-uglify'),
+    watch       = require('gulp-watch'),
+    zip         = require('gulp-zip'),
+    source      = require('vinyl-source-stream'),
 
     // the filepath setup
     _DATESTAMP_     = Date.now(),
-    CORE_SOURCE     = ['core/*.js', '!core/core.es5.min.js'],
+    CORE_SOURCE     = ['core/**/*.js', '!core/core.es5.min.js'],
     CORE_DEST       = 'build/core/',
-    DEV_CORE_DEST   = 'core',
+    DEV_CORE_DEST   = 'core/',
     INDEX_SOURCE    = 'index.html',
     INDEX_DEST      = 'build/',
     ZIP_SOURCE      = ['build/**/*'],
     ZIP_DEST        = 'zip/';
 
-//gulp.task('set-env', function(){
-//    env({"file": ".env.json"});
-//    console.log(process.env.environment);
-//});
 
 gulp.task('default', ['buildCompressed']);
 
@@ -53,6 +49,7 @@ gulp.task('watch', function(){
  *  uglify - min.js
  *  minifyHTML
  */
+
 gulp.task('buildCompressed', ['clean', 'buildCore', 'buildIndex', 'zip', 'zipSize']);
 
 gulp.task('clean', ['cleanZips', 'cleanBuild']);
@@ -73,11 +70,14 @@ gulp.task('buildIndex', ['clean'], function(cb) {
 
 gulp.task('buildCore', ['clean'], function(cb) {
     del(["core/core.es5.min.js"]);
-    return gulp.src(CORE_SOURCE)
-        .pipe(concat('core.es5.min.js'))
-        .pipe(babel())
+    browserify({
+        entries: "./core/Main.js",
+        debug: false
+    })
+        .transform(babelify)
+        .bundle()
+        .pipe(source('core.es5.min.js'))
         .pipe(gulp.dest(DEV_CORE_DEST))
-        .pipe(uglify())
         .pipe(gulp.dest(CORE_DEST));
 });
 
@@ -90,4 +90,15 @@ gulp.task('zip', ['buildCore', 'buildIndex'], function() {
 gulp.task('zipSize', ['zip'],  function(){
     return gulp.src('zip/build_'+_DATESTAMP_+'.zip')
         .pipe(size({showFiles:true, pretty: true}));
+});
+
+gulp.task('test', function(){
+    browserify({
+        entries: "./core/Main.js",
+        debug: false
+    })
+    .transform(babelify)
+    .bundle()
+    .pipe(source('core.es5.min.js'))
+    .pipe(gulp.dest('./build/core/'));
 });
