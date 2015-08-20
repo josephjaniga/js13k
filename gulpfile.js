@@ -63,7 +63,6 @@ gulp.task('cleanZips', function(cb){
 });
 
 gulp.task('cleanBuild', function(cb){
-    del(["core/core.es5.min.js"]);
     del(['build/*'], cb);
 });
 

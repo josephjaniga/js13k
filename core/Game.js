@@ -5,8 +5,7 @@ class Game {
         console.log(options);
         console.log(document.getElementById("view"));
 
-        if(options.canvas != null){
-            this.ctx = options.canvas.getContext('2d');
-        }
+        this.CTX = options.canvas.getContext('2d');
+        this.CTX.fillRect(10, 10, 10, 10);
     }
 }
