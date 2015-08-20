@@ -6,7 +6,6 @@ class Game {
         //console.log("Game | constructor");
         this.objs = [new GameObject()];
         this.CTX = options.canvas.getContext('2d');
-
         this.Update = ()=>{};
         this.Draw = ()=>{};
         this.Loop = ()=>{
@@ -14,7 +13,6 @@ class Game {
             this.Draw();
             requestAnimationFrame(this.Loop);
         };
-
         this.Loop();
     }
 }
@@ -23,6 +21,6 @@ class Game {
 module.exports = Game;
 
 /**
- *  USING arrow functions here in ES6 for lexical scope inheritance
- *  they assume the scope (this) from thier parent scoping
+ *  using ARROW FUNCTIONS here in ES6 for lexical scope inheritance
+ *  they assume the scope (this) from their parent scoping
  */
