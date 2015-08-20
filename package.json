@@ -1,5 +1,5 @@
 {
-  "name": "js13k",
+  "name": "js13k-2015",
   "version": "1.0.0",
   "description": "js13k compo",
   "main": "index.js",
@@ -15,9 +15,12 @@
     "gulp-concat": "^2.6.0",
     "gulp-env": "^0.2.0",
     "gulp-minify-html": "^1.0.4",
+    "gulp-notify": "^2.2.0",
     "gulp-regex-replace": "^0.2.3",
     "gulp-rename": "^1.2.2",
+    "gulp-size": "^2.0.0",
     "gulp-uglify": "^1.2.0",
+    "gulp-watch": "^4.3.5",
     "gulp-zip": "^3.0.2"
   }
 }
