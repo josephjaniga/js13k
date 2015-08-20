@@ -15,12 +15,12 @@ var gulp        = require('gulp'),
 
     // the filepath setup
     _DATESTAMP_     = Date.now(),
-    CORE_SOURCE     = ['core/*.js'],
+    CORE_SOURCE     = ['core/*.js', '!core/core.es5.min.js'],
     CORE_DEST       = 'build/core/',
     DEV_CORE_DEST   = 'core',
     INDEX_SOURCE    = 'index.html',
     INDEX_DEST      = 'build/',
-    ZIP_SOURCE      = ['build/'],
+    ZIP_SOURCE      = ['build/**/*'],
     ZIP_DEST        = 'zip/';
 
 //gulp.task('set-env', function(){
@@ -35,12 +35,11 @@ gulp.task('default', ['buildCompressed']);
  * WATCH TASK
  */
 gulp.task('watch', function(){
-    var TOTAL_SOURCE = [CORE_SOURCE[0], '!core/core.es5.min.js'];
-    watch(TOTAL_SOURCE, function(){
+    watch(CORE_SOURCE, function(){
         del(["core/core.es5.min.js"]);
-        return gulp.src(TOTAL_SOURCE)
-            .pipe(babel())
+        return gulp.src(CORE_SOURCE)
             .pipe(concat('core.es5.min.js'))
+            .pipe(babel())
             //.pipe(uglify())
             .pipe(gulp.dest(DEV_CORE_DEST));
     });
@@ -73,9 +72,10 @@ gulp.task('buildIndex', ['clean'], function(cb) {
 });
 
 gulp.task('buildCore', ['clean'], function(cb) {
+    del(["core/core.es5.min.js"]);
     return gulp.src(CORE_SOURCE)
-        .pipe(babel())
         .pipe(concat('core.es5.min.js'))
+        .pipe(babel())
         .pipe(gulp.dest(DEV_CORE_DEST))
         .pipe(uglify())
         .pipe(gulp.dest(CORE_DEST));
