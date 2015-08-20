@@ -12,6 +12,7 @@ var babelify    = require('babelify'),
     watch       = require('gulp-watch'),
     zip         = require('gulp-zip'),
     source      = require('vinyl-source-stream'),
+    buffer      = require('vinyl-buffer'),
 
     // the filepath setup
     _DATESTAMP_     = Date.now(),
@@ -20,26 +21,11 @@ var babelify    = require('babelify'),
     DEV_CORE_DEST   = 'core/',
     INDEX_SOURCE    = 'index.html',
     INDEX_DEST      = 'build/',
-    ZIP_SOURCE      = ['build/**/*'],
+    ZIP_SOURCE      = ['./build/**','./build/**/*','./build/**/*.*','build/**', 'build/'],
     ZIP_DEST        = 'zip/';
 
 
 gulp.task('default', ['buildCompressed']);
-
-/**
- * BUILD DEVELOPMENT
- * WATCH TASK
- */
-gulp.task('watch', function(){
-    watch(CORE_SOURCE, function(){
-        del(["core/core.es5.min.js"]);
-        return gulp.src(CORE_SOURCE)
-            .pipe(concat('core.es5.min.js'))
-            .pipe(babel())
-            //.pipe(uglify())
-            .pipe(gulp.dest(DEV_CORE_DEST));
-    });
-});
 
 /**
  * BUILD PRODUCTION
@@ -50,7 +36,7 @@ gulp.task('watch', function(){
  *  minifyHTML
  */
 
-gulp.task('buildCompressed', ['clean', 'buildCore', 'buildIndex', 'zip', 'zipSize']);
+gulp.task('buildCompressed', ['clean', 'buildIndex', 'buildCore', 'zip', 'zipSize']);
 
 gulp.task('clean', ['cleanZips', 'cleanBuild']);
 
@@ -62,22 +48,23 @@ gulp.task('cleanBuild', function(cb){
     del(['build/*'], cb);
 });
 
-gulp.task('buildIndex', ['clean'], function(cb) {
+gulp.task('buildIndex', function() {
     return gulp.src(INDEX_SOURCE)
         .pipe(minifyHTML({conditionals:true, spare:true}))
         .pipe(gulp.dest(INDEX_DEST));
 });
 
-gulp.task('buildCore', ['clean'], function(cb) {
+gulp.task('buildCore', function() {
     del(["core/core.es5.min.js"]);
-    browserify({
-        entries: "./core/Main.js",
-        debug: false
-    })
+    return browserify({
+            entries: "./core/Main.js",
+            debug: false
+        })
         .transform(babelify)
         .bundle()
         .pipe(source('core.es5.min.js'))
-        .pipe(gulp.dest(DEV_CORE_DEST))
+        .pipe(buffer())
+        .pipe(uglify())
         .pipe(gulp.dest(CORE_DEST));
 });
 
@@ -85,6 +72,7 @@ gulp.task('zip', ['buildCore', 'buildIndex'], function() {
     return gulp.src(ZIP_SOURCE)
         .pipe(zip('build_'+_DATESTAMP_+'.zip'))
         .pipe(gulp.dest(ZIP_DEST));
+
 });
 
 gulp.task('zipSize', ['zip'],  function(){
