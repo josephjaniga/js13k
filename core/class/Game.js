@@ -6,8 +6,16 @@ class Game {
         //console.log("Game | constructor");
         this.objs = [new GameObject()];
         this.CTX = options.canvas.getContext('2d');
-        this.Update = ()=>{};
-        this.Draw = ()=>{};
+        this.Update = ()=>{
+            this.objs.forEach((el)=>{
+                el.Update();
+            });
+        };
+        this.Draw = ()=>{
+            this.objs.forEach((el)=>{
+                //el.Draw();
+            });
+        };
         this.Loop = ()=>{
             this.Update();
             this.Draw();
