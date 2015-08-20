@@ -2,7 +2,6 @@ import GameObject from "./GameObject.js";
 
 class Game {
     constructor(options){
-        alert("the right one");
         //console.log("Game | constructor");
         this.objs = [new GameObject()];
         this.CTX = options.canvas.getContext('2d');
@@ -13,7 +12,7 @@ class Game {
         };
         this.Draw = ()=>{
             this.objs.forEach((el)=>{
-                //el.Draw();
+                el.Draw(this.CTX);
             });
         };
         this.Loop = ()=>{

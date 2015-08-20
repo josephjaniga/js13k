@@ -64,7 +64,8 @@ gulp.task('buildCore', function() {
         .bundle()
         .pipe(source('core.es5.min.js'))
         .pipe(buffer())
-        .pipe(uglify())
+        //.pipe(uglify(false))
+        //.pipe(buffer())
         .pipe(gulp.dest(CORE_DEST));
 });
 
