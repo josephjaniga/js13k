@@ -14,7 +14,3 @@ export default class Jump extends Component{
         };
     }
 }
-
-//
-//module.exports = Jump;
-//

@@ -1,17 +1,12 @@
 import GameObject from "./GameObject.js";
 import Vector2 from "./Vector2.js";
 
+let singleton = Symbol();
+let singletonEnforcer = Symbol();
+
 export default class Game {
     constructor(options){
-
         console.log("Game | constructor");
-
-        // PROPERTIES
-        let scale = 3;
-        this.canvas = options.canvas;
-        this.resolution = new Vector2(320*scale, 188*scale);
-        this.CTX = this.canvas.getContext('2d');
-        this.objs = [];
 
         // METHODS
         this.Update = ()=>{
@@ -34,12 +29,23 @@ export default class Game {
             this.canvas.width = x;
             this.canvas.height = y;
         };
-        this.init = () =>{
+        this.init = (options) =>{
+            this.canvas = options.canvas;
+
+            // PROPERTIES
+            let scale = 3;
+            this.resolution = new Vector2(320*scale, 188*scale);
+            this.CTX = this.canvas.getContext('2d');
+            this.objs = [];
             this.ResizeCanvas(this.resolution.x, this.resolution.y);
             this.CTX.scale(scale, scale);
         };
-
-        this.init();
+    }
+    static get instance() {
+        if (!this[singleton]) {
+            this[singleton] = new Game(singletonEnforcer);
+        }
+        return this[singleton];
     }
 }
 

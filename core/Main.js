@@ -1,6 +1,6 @@
 import Collider from "./class/Collider.js";
 import Component from "./class/Component.js";
-import Game from "./class/Game.js";
+import { G as Game } from "./class/Game.js";
 import GameObject from "./class/GameObject.js";
 import Input from "./class/Input.js";
 import Jump from "./class/Jump.js";
@@ -13,8 +13,9 @@ import Vector2 from "./class/Vector2.js";
 var canvas = document.getElementById("view"),
     _input = new Input(),
     options = {"canvas": canvas},
-    _game = new Game(options);
+    _game = Game;
 
+_game.init(options);
 _input.Attach();
 _game.Loop();
 
