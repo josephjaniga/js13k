@@ -25,6 +25,11 @@ var babelify    = require('babelify'),
     ZIP_DEST        = 'zip/';
 
 
+gulp.task('watch', function() {
+    gulp.watch('./core/**/*', ['buildCompressed']);
+    gulp.watch('./index.html', ['buildCompressed']);
+});
+
 gulp.task('default', ['buildCompressed']);
 
 /**
@@ -73,7 +78,6 @@ gulp.task('zip', ['buildCore', 'buildIndex'], function() {
     return gulp.src(ZIP_SOURCE)
         .pipe(zip('build_'+_DATESTAMP_+'.zip'))
         .pipe(gulp.dest(ZIP_DEST));
-
 });
 
 gulp.task('zipSize', ['zip'],  function(){
