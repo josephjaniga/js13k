@@ -3,15 +3,17 @@ import Vector2 from "./Vector2.js";
 
 class Game {
     constructor(options){
+
         console.log("Game | constructor");
+
+        // PROPERTIES
         let scale = 3;
-        this.resolution = new Vector2(320*scale, 188*scale);
-        this.objs = [new GameObject()];
         this.canvas = options.canvas;
-        this.canvas.width = this.resolution.x;
-        this.canvas.height = this.resolution.y;
+        this.resolution = new Vector2(320*scale, 188*scale);
         this.CTX = this.canvas.getContext('2d');
-        this.CTX.scale(scale, scale);
+        this.objs = [];
+
+        // METHODS
         this.Update = ()=>{
             this.objs.forEach((el)=>{
                 el.Update();
@@ -28,7 +30,16 @@ class Game {
             this.Draw();
             requestAnimationFrame(this.Loop);
         };
-        this.Loop();
+        this.ResizeCanvas = (x, y)=>{
+            this.canvas.width = x;
+            this.canvas.height = y;
+        };
+        this.init = () =>{
+            this.ResizeCanvas(this.resolution.x, this.resolution.y);
+            this.CTX.scale(scale, scale);
+        };
+
+        this.init();
     }
 }
 
