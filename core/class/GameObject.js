@@ -11,6 +11,8 @@ class GameObject {
             size: new Vector2(10,10)
         });
 
+        this.collider = true;
+
         this.color = "#000000";
 
         this.components = [];
