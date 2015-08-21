@@ -71,7 +71,8 @@ gulp.task('buildCore', function() {
         .pipe(buffer())
         //.pipe(uglify(false))
         //.pipe(buffer())
-        .pipe(gulp.dest(CORE_DEST));
+        .pipe(gulp.dest(CORE_DEST))
+        .pipe(gulp.dest(DEV_CORE_DEST));
 });
 
 gulp.task('zip', ['buildCore', 'buildIndex'], function() {
