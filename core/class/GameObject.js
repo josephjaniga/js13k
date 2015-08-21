@@ -1,7 +1,7 @@
 import Transform from "./Transform.js";
 import Vector2 from "./Vector2.js";
 
-class GameObject {
+export default class GameObject {
     constructor(){
 
         console.log("GameObject | constructor");
@@ -47,6 +47,3 @@ class GameObject {
 
     }
 }
-
-module.exports = GameObject;
-

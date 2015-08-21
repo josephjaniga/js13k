@@ -1,6 +1,6 @@
 import Component from "./Component.js";
 
-class Transform extends Component {
+export default class Transform extends Component {
     constructor(options){
         super(options);
         console.log("Transform | constructor");
@@ -8,5 +8,3 @@ class Transform extends Component {
         this.size = options.size;
     }
 }
-
-module.exports = Transform;

@@ -1,8 +1,7 @@
 const SPACE = 32;
 
-class Input {
+export default class Input {
     constructor(options){
-
         console.log("Input | constructor");
 
         this.isSpaceDown = false;
@@ -29,5 +28,3 @@ class Input {
         }
     }
 }
-
-module.exports = Input;

@@ -1,7 +1,7 @@
 import GameObject from "./GameObject.js";
 import Vector2 from "./Vector2.js";
 
-class Game {
+export default class Game {
     constructor(options){
 
         console.log("Game | constructor");
@@ -42,9 +42,6 @@ class Game {
         this.init();
     }
 }
-
-
-module.exports = Game;
 
 /**
  *  using ARROW FUNCTIONS here in ES6 for lexical scope inheritance

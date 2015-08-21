@@ -1,7 +1,6 @@
 import Component from "./Component.js";
 
-class Jump extends Component{
-
+export default class Jump extends Component{
     constructor(options){
         super(options);
         console.log("Jump | constructor");
@@ -13,9 +12,9 @@ class Jump extends Component{
                 this.gameObject.color = "#000000";
             }
         };
-
     }
 }
 
-module.exports = Jump;
-
+//
+//module.exports = Jump;
+//
