@@ -9,11 +9,15 @@ export default class SpriteRenderer extends Component{
 
         //this.animations = options.animations;
 
-        this.animations = [
-                {name: "Walk", frames: [0, 1, 2, 3]},
-                {name: "Jump", frames: [4]}
-            ];
-
+        /**
+         *  [
+         *      { name:"Anim-1", frames:[0 ... N] },
+         *      { more animations... },
+         *      { name:"Anim-N", frames:[0 ... N] }
+         *  ]
+         * @type {animations|*|Array}
+         */
+        this.animations = options.animations;
         this.lastAnimation = 0;
         this.currentAnimation = 0;
 

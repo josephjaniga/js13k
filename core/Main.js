@@ -40,7 +40,12 @@ player.transform = new Transform({
 player.AddComponent(new Collider());
 player.AddComponent(new PhysicsBody({kinematic:false}));
 player.AddComponent(new Jump({input:_input}));
-player.AddComponent(new SpriteRenderer());
+player.AddComponent(new SpriteRenderer({
+        animations:[
+            {name: "Walk", frames: [0, 1, 2, 3]},
+            {name: "Jump", frames: [4]}
+        ]
+    }));
 player.color = Color.transparent;
 player.name = "Player";
 
