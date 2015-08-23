@@ -18,9 +18,13 @@ export default class PhysicsBody extends Component {
         this.acceleration = Vector2.zero();
         this.collider = null;
         this.isKinematic = (options && options.kinematic) || false;
+
+        this.game = Game.instance;
+
         this.Update = ()=>{
-            if ( !this.isKinematic ){
+            if ( !this.isKinematic && this.gameObject.name === "Player" ){
                 this.Step();
+                console.log(this.gameObject.name + " " + this.game.objs.length);
             }
         };
         this.Draw = ()=>{};
@@ -38,20 +42,37 @@ export default class PhysicsBody extends Component {
                 this.collider = this.gameObject.GetComponent("Collider");
             }
 
-            let col = false,
+            var col = false,
                 t = this.gameObject.transform,
-                myRect = new Rect(t.position.x+this.velocity.x, t.position.y+this.velocity.y, t.size.x, t.size.y);
+                myRect = new Rect();
+                myRect.init(
+                    t.position.x+this.velocity.x,
+                    t.position.y+this.velocity.y,
+                    t.size.x,
+                    t.size.y
+                );
+
+            var rect = [myRect.position.x, myRect.position.y, myRect.size.x, myRect.size.y];
+            Game.instance.CTX.fillStyle = "#00ff00";
+            Game.instance.CTX.fillRect(...rect);
 
             // check if new position has collision?
             if ( !this.collider !== null ){
-                Game.objs.forEach((object)=>{
-                    let t2 = object.transform,
-                        objRect = new Rect(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
-                    if ( this.AABB(myRect, objRect) ){
+
+            }
+
+            this.game.objs.forEach((object)=>{
+                if ( object !== this.gameObject ) {
+                    var t2 = object.transform,
+                        objRect = new Rect();
+                    objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
+                    if (this.AABB(myRect, objRect)) {
                         col = true;
                     }
-                });
-            }
+                }
+            });
+
+            console.log(col);
 
             if ( !col ){
                 // apply motion
@@ -61,11 +82,11 @@ export default class PhysicsBody extends Component {
 
         };
         this.AABB = (rect1, rect2)=>{
-            let collision = false;
-            if (rect1.x < rect2.x + rect2.width &&
-                rect1.x + rect1.width > rect2.x &&
-                rect1.y < rect2.y + rect2.height &&
-                rect1.height + rect1.y > rect2.y) {
+            var collision = false;
+            if (rect1.position.x < rect2.position.x + rect2.size.x &&
+                rect1.position.x + rect1.size.x > rect2.position.x &&
+                rect1.position.y < rect2.position.y + rect2.size.y &&
+                rect1.size.y + rect1.position.y > rect2.position.y) {
                 // collision detected!
                 collision = true;
             }

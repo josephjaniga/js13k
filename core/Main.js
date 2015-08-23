@@ -1,6 +1,6 @@
 import Collider from "./class/Collider.js";
 import Component from "./class/Component.js";
-import { G as Game } from "./class/Game.js";
+import Game from "./class/Game.js";
 import GameObject from "./class/GameObject.js";
 import Input from "./class/Input.js";
 import Jump from "./class/Jump.js";
@@ -13,19 +13,18 @@ import Vector2 from "./class/Vector2.js";
 var canvas = document.getElementById("view"),
     _input = new Input(),
     options = {"canvas": canvas},
-    _game = Game;
+    _game = Game.instance;
 
 _game.init(options);
 _input.Attach();
 _game.Loop();
 
 // setup the player
-var player = new GameObject()
-
-// assign components to the player
+var player = new GameObject();
 player.AddComponent(new Jump({input:_input}));
-player.AddComponent(new PhysicsBody());
-player.AddComponent(new Collider());
+player.AddComponent(new PhysicsBody({kinematic:false}));
+player.name = "Player";
+
 
 // setup the floor
 var floor = new GameObject()
@@ -35,9 +34,10 @@ floor.transform = new Transform({
     size: new Vector2(320,20)
 });
 floor.AddComponent(
-    new PhysicsBody({"kinematic":true})
+    new PhysicsBody({kinematic:true})
 );
-floor.AddComponent(new Collider());
+floor.name = "Floor";
+
 
 // add the player to the game
 _game.objs.push(player);

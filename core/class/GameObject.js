@@ -6,6 +6,8 @@ export default class GameObject {
 
         console.log("GameObject | constructor");
 
+        this.name = "GO";
+
         this.transform = new Transform({
             position: new Vector2(10,10),
             size: new Vector2(10,10)
