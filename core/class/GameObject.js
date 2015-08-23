@@ -44,14 +44,11 @@ export default class GameObject {
 
         this.Destroy = ()=>{
             // remove it from this gameobjs
-            if ( this.name.contains("Platform") ){
-                // make a new one before destroying this
-            }
             var i = Game.instance.objs.indexOf(this);
             if ( i > -1 ){
                 Game.instance.objs.splice(i,1);
             }
-            Game.instance.RecalculatePlatforms();
+            //Game.instance.RecalculatePlatforms();
         };
 
         this.isOnScreen = ()=>{

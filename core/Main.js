@@ -21,7 +21,3 @@ var canvas = document.getElementById("view"),
 _game.init(options);
 _input.Attach();
 _game.Loop();
-
-_game.SpawnPlayer(new Vector2(280, 0), new Vector2(20, 20));
-_game.SpawnPlatform(new Vector2(160,90), new Vector2(320,20));
-_game.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));

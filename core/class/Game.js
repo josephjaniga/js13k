@@ -62,6 +62,12 @@ export default class Game {
             this.objs = [];
             this.ResizeCanvas(this.resolution.x * this.scale, this.resolution.y * this.scale);
             this.CTX.scale(this.scale, this.scale);
+
+            // setup
+            this.SpawnPlayer(new Vector2(280, 0), new Vector2(20, 20));
+            this.SpawnPlatform(new Vector2(160,90), new Vector2(320,20));
+            //this.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));
+
         };
         this.SpawnPlatform = (position, size)=> {
             // setup the platform
@@ -76,8 +82,9 @@ export default class Game {
             platform.color = Game.instance.color.light;
             platform.name = "Platform";
 
-            this.RecalculatePlatforms();
+            //this.RecalculatePlatforms();
             this.objs.push(platform);
+            return platform;
         };
         this.SpawnPlayer = (position, size)=> {
             // setup the player
@@ -101,15 +108,15 @@ export default class Game {
             // add the player to the game
             this.objs.push(player);
         };
-        this.RecalculatePlatforms = ()=>{
-            let i = 0;
-            this.objs.forEach((el)=> {
-                if ( el.name.indexOf("Platform") > -1 ){
-                    i++
-                }
-            });
-            this.platformCount = i;
-        };
+        //this.RecalculatePlatforms = ()=>{
+        //    let i = 0;
+        //    this.objs.forEach((el)=> {
+        //        if ( el.name.indexOf("Platform") > -1 ){
+        //            i++
+        //        }
+        //    });
+        //    this.platformCount = i;
+        //};
     }
     static get instance() {
         if (!this[singleton]) {
