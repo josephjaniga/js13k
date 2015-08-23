@@ -5,7 +5,6 @@ export default class Jump extends Component{
         super(options);
         console.log("Jump | constructor");
         this.input = options.input;
-        this.grounded = false;
         this.SpriteRenderer = null;
         this.Update = ()=>{
 

@@ -86,6 +86,7 @@ export default class PhysicsBody extends Component {
 
             if ( !yCol ) {
                 this.gameObject.transform.position.y += this.velocity.y;
+                this.grounded = false;
             } else {
                 // if would collide with floor, set the position to the floor
                 this.gameObject.transform.position.y = yFloorCeil;
