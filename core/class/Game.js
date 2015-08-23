@@ -65,7 +65,7 @@ export default class Game {
 
             // setup
             this.SpawnPlayer(new Vector2(280, 0), new Vector2(20, 20));
-            this.SpawnPlatform(new Vector2(160,90), new Vector2(320,20));
+            this.SpawnPlatform(new Vector2(160,90), new Vector2(320,5));
             //this.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));
 
         };

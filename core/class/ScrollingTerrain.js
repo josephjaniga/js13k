@@ -11,11 +11,17 @@ export default class ScrollingTerrain extends Component{
         this.Update = ()=>{
 
             // no link yet and on screen
-            if ( this.link === null && this.gameObject.transform.position.x > 0 ){
+            if ( this.link === null && this.gameObject.transform.position.x > 105 ){
 
-                var newSize = new Vector2(this.RandomRange(160,80),20),
-                    newPositionX = this.gameObject.transform.position.x - newSize.x,
+                var newSize = new Vector2(this.RandomRange(80,320),30),
+                    newPositionX = this.gameObject.transform.position.x - newSize.x - this.RandomRange(100,0),
                     newPositionY = this.gameObject.transform.position.y + this.RandomRange(20,-20);
+                if ( newPositionY < 50 ){
+                    newPositionY = 50;
+                }
+                if ( newPositionY > 180 ){
+                    newPositionY = 180;
+                }
                 this.link = Game.instance.SpawnPlatform(
                     new Vector2(
                         newPositionX,
