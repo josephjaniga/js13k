@@ -13,7 +13,7 @@ import Rect from "./Rect.js";
 export default class PhysicsBody extends Component {
     constructor(options){
         super(options);
-        this.gravity = new Vector2(0,0.85);
+        this.gravity = new Vector2(0,0.5);
         this.velocity = Vector2.zero();
         this.acceleration = Vector2.zero();
         this.collider = null;
@@ -34,8 +34,8 @@ export default class PhysicsBody extends Component {
             this.velocity.y += this.acceleration.y + this.gravity.y;
 
             // drag?
-            this.velocity.x *= 0.8;
-            this.velocity.y *= 0.8;
+            this.velocity.x *= 0.9;
+            this.velocity.y *= 0.9;
 
             // assign the Collider if there is one
             if ( this.collider === null ) {
@@ -73,7 +73,7 @@ export default class PhysicsBody extends Component {
                         }
                         if (this.AABB(yRect, objRect)) {
                             yCol = true;
-                            yFloorCeil = t2.position.y - t2.size.y/2;
+                            yFloorCeil = t2.position.y - this.gameObject.transform.size.y;
                         }
                     }
                 });

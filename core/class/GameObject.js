@@ -6,18 +6,12 @@ export default class GameObject {
     constructor(){
 
         console.log("GameObject | constructor");
-
         this.name = "GO";
-
         this.transform = new Transform({
             position: new Vector2(10,10),
             size: new Vector2(10,10)
         });
-
         this.collider = true;
-
-        this.color = "rgba(0,0,0,1)";
-
         this.components = [];
 
         this.Update = ()=>{
@@ -27,10 +21,9 @@ export default class GameObject {
         };
 
         this.Draw = (ctx)=>{
-            var t = this.transform,
-                rect = [t.position.x, t.position.y, t.size.x, t.size.y];
-            ctx.fillStyle = this.color;
-            ctx.fillRect(...rect);
+            this.components.forEach(function(component){
+                component.Draw(ctx);
+            });
         };
 
         this.GetComponent = (name)=>{

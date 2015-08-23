@@ -5,7 +5,7 @@ export default class ScrollingTerrain extends Component{
     constructor(options){
         super(options);
         console.log("ScrollingTerrain | constructor");
-        this.speed = 0.75;
+        this.speed = 1.75;
         this.Update = ()=>{
             // Scroll Right
             this.gameObject.transform.position.x += this.speed;
