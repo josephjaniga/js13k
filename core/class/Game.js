@@ -33,12 +33,12 @@ export default class Game {
             this.canvas = options.canvas;
 
             // PROPERTIES
-            let scale = 3;
-            this.resolution = new Vector2(320*scale, 188*scale);
+            this.scale = 3;
+            this.resolution = new Vector2(320, 188);
             this.CTX = this.canvas.getContext('2d');
             this.objs = [];
-            this.ResizeCanvas(this.resolution.x, this.resolution.y);
-            this.CTX.scale(scale, scale);
+            this.ResizeCanvas(this.resolution.x*this.scale, this.resolution.y*this.scale);
+            this.CTX.scale(this.scale, this.scale);
         };
     }
     static get instance() {
@@ -53,3 +53,5 @@ export default class Game {
  *  using ARROW FUNCTIONS here in ES6 for lexical scope inheritance
  *  they assume the scope (this) from their parent scoping
  */
+
+

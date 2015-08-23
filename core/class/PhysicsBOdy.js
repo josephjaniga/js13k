@@ -13,18 +13,18 @@ import Rect from "./Rect.js";
 export default class PhysicsBody extends Component {
     constructor(options){
         super(options);
-        this.gravity = new Vector2(0,1);
+        this.gravity = new Vector2(0,0.85);
         this.velocity = Vector2.zero();
         this.acceleration = Vector2.zero();
         this.collider = null;
         this.isKinematic = (options && options.kinematic) || false;
 
         this.game = Game.instance;
+        this.grounded = false;
 
         this.Update = ()=>{
-            if ( !this.isKinematic && this.gameObject.name === "Player" ){
+            if ( !this.isKinematic ){
                 this.Step();
-                console.log(this.gameObject.name + " " + this.game.objs.length);
             }
         };
         this.Draw = ()=>{};
@@ -34,50 +34,62 @@ export default class PhysicsBody extends Component {
             this.velocity.y += this.acceleration.y + this.gravity.y;
 
             // drag?
-            this.velocity.x *= 0.7;
-            this.velocity.y *= 0.7;
+            this.velocity.x *= 0.8;
+            this.velocity.y *= 0.8;
 
-            // assign the collider if there is one
+            // assign the Collider if there is one
             if ( this.collider === null ) {
                 this.collider = this.gameObject.GetComponent("Collider");
             }
 
-            var col = false,
+            var xCol = false,
+                yCol = false,
                 t = this.gameObject.transform,
-                myRect = new Rect();
-                myRect.init(
+                xRect = new Rect();
+                xRect.init(
                     t.position.x+this.velocity.x,
+                    t.position.y,
+                    t.size.x,
+                    t.size.y
+                );
+            var yRect = new Rect();
+                yRect.init(
+                    t.position.x,
                     t.position.y+this.velocity.y,
                     t.size.x,
                     t.size.y
                 );
+            var yFloorCeil = 0;
 
-            var rect = [myRect.position.x, myRect.position.y, myRect.size.x, myRect.size.y];
-            Game.instance.CTX.fillStyle = "#00ff00";
-            Game.instance.CTX.fillRect(...rect);
-
-            // check if new position has collision?
+            // check if new position has Collision?
             if ( !this.collider !== null ){
-
+                this.game.objs.forEach((object)=>{
+                    if ( object !== this.gameObject ) {
+                        var t2 = object.transform,
+                            objRect = new Rect();
+                        objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
+                        if (this.AABB(xRect, objRect)) {
+                            xCol = true;
+                        }
+                        if (this.AABB(yRect, objRect)) {
+                            yCol = true;
+                            yFloorCeil = t2.position.y - t2.size.y/2;
+                        }
+                    }
+                });
             }
 
-            this.game.objs.forEach((object)=>{
-                if ( object !== this.gameObject ) {
-                    var t2 = object.transform,
-                        objRect = new Rect();
-                    objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
-                    if (this.AABB(myRect, objRect)) {
-                        col = true;
-                    }
-                }
-            });
-
-            console.log(col);
-
-            if ( !col ){
-                // apply motion
+            // apply motion
+            if ( !xCol ){
                 this.gameObject.transform.position.x += this.velocity.x;
+            }
+
+            if ( !yCol ) {
                 this.gameObject.transform.position.y += this.velocity.y;
+            } else {
+                // if would collide with floor, set the position to the floor
+                this.gameObject.transform.position.y = yFloorCeil;
+                this.grounded = true;
             }
 
         };

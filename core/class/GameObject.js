@@ -1,5 +1,6 @@
 import Transform from "./Transform.js";
 import Vector2 from "./Vector2.js";
+import Game from "./Game.js";
 
 export default class GameObject {
     constructor(){
@@ -15,7 +16,7 @@ export default class GameObject {
 
         this.collider = true;
 
-        this.color = "#000000";
+        this.color = "rgba(0,0,0,1)";
 
         this.components = [];
 
@@ -35,6 +36,7 @@ export default class GameObject {
         this.GetComponent = (name)=>{
             let needle = null;
             this.components.forEach(function(component){
+                //console.log(component.constructor.name);
                 if ( component.constructor.name === name ){
                     needle = component;
                 }
@@ -45,6 +47,23 @@ export default class GameObject {
         this.AddComponent = (component)=>{
             this.components.push(component);
             component.gameObject = this;
+        };
+
+        this.Destroy = ()=>{
+            var i = Game.instance.objs.indexOf(this);
+            if ( i > -1 ){
+                Game.instance.objs.splice(i,1);
+            }
+        };
+
+        this.isOnScreen = ()=>{
+            var t = this.transform,
+                status = false;
+            if ( t.position.x + t.size.x > 0 && t.position.x < Game.instance.resolution.x &&
+                t.position.y + t.size.y > 0 && t.position.y < Game.instance.resolution.y ){
+                status = true;
+            }
+            return status;
         };
 
     }
