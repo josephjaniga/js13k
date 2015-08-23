@@ -47,8 +47,8 @@ player.name = "Player";
 // setup the floor
 var floor = new GameObject();
 floor.transform = new Transform({
-    position: new Vector2(0,180),
-    size: new Vector2(160,20)
+    position: new Vector2(0,90),
+    size: new Vector2(320,20)
 });
 floor.AddComponent(new Collider());
 floor.AddComponent(new ScrollingTerrain());
