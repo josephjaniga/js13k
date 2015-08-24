@@ -13,7 +13,7 @@ import Rect from "./Rect.js";
 export default class PhysicsBody extends Component {
     constructor(options){
         super(options);
-        this.gravity = new Vector2(0,0.5);
+        this.gravity = new Vector2(0,0.3);
         this.velocity = Vector2.zero();
         this.acceleration = Vector2.zero();
         this.collider = null;
@@ -74,6 +74,9 @@ export default class PhysicsBody extends Component {
                         if (this.AABB(yRect, objRect)) {
                             yCol = true;
                             yFloorCeil = t2.position.y - this.gameObject.transform.size.y;
+                            if ( object.name === "CollisionDeath" && this.gameObject.name === "Player" ){
+                                this.gameObject.GetComponent("Player").Die();
+                            }
                         }
                     }
                 });

@@ -5,7 +5,7 @@ import Game from "./Game.js";
 export default class SpriteRenderer extends Component{
     constructor(options){
         super(options);
-        console.log("SpriteRenderer | constructor");
+        //console.log("SpriteRenderer | constructor");
 
         //this.animations = options.animations;
 

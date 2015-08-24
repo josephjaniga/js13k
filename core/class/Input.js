@@ -5,7 +5,7 @@ let singletonEnforcer = Symbol();
 
 export default class Input {
     constructor(options){
-        console.log("Input | constructor");
+        //console.log("Input | constructor");
 
         this.isSpaceDown = false;
         this.KeyDown = (e)=>{

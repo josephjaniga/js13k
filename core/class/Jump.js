@@ -3,7 +3,7 @@ import Component from "./Component.js";
 export default class Jump extends Component{
     constructor(options){
         super(options);
-        console.log("Jump | constructor");
+        //console.log("Jump | constructor");
         this.input = options.input;
         this.SpriteRenderer = null;
         this.Update = ()=>{
@@ -15,7 +15,7 @@ export default class Jump extends Component{
 
             if ( this.input.isSpaceDown && this.pb && this.pb.grounded ){
                 this.gameObject.color = "#FF0000";
-                this.pb.velocity.y = -12;
+                this.pb.velocity.y = -8;
                 this.pb.grounded = false;
             } else {
                 this.gameObject.color = "#000000";

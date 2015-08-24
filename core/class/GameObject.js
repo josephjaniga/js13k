@@ -5,7 +5,7 @@ import Game from "./Game.js";
 export default class GameObject {
     constructor(){
 
-        console.log("GameObject | constructor");
+        //console.log("GameObject | constructor");
         this.name = "GO";
         this.transform = new Transform({
             position: new Vector2(10,10),
@@ -54,8 +54,10 @@ export default class GameObject {
         this.isOnScreen = ()=>{
             var t = this.transform,
                 status = false;
-            if ( t.position.x + t.size.x > 0 && t.position.x < Game.instance.resolution.x &&
-                t.position.y + t.size.y > 0 && t.position.y < Game.instance.resolution.y ){
+            if (    //t.position.x + t.size.x > 0 &&
+                    t.position.x < Game.instance.resolution.x &&
+                    t.position.y + t.size.y > 0 &&
+                    t.position.y < Game.instance.resolution.y ){
                 status = true;
             }
             return status;

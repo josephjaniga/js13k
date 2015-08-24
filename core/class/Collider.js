@@ -4,7 +4,7 @@ export default class Collider extends Component{
 
     constructor(options){
         super(options);
-        console.log("Collider | constructor");
+        //console.log("Collider | constructor");
     }
 
 }
