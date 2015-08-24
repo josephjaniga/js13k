@@ -30,6 +30,8 @@ export default class Game {
         var desiredPlatforms = 2;
         this.platformCount = 0;
 
+        this.objs = [];
+
         // METHODS
         this.Update = ()=> {
 
@@ -53,8 +55,14 @@ export default class Game {
             this.canvas.width = x;
             this.canvas.height = y;
         };
-        this.init = (options) => {
-            this.canvas = options.canvas;
+        this.reset = ()=>{
+            this.objs.forEach((obj)=>{
+                obj.Destroy();
+            });
+        };
+        this.init = () => {
+
+            this.reset();
 
             // PROPERTIES
             this.scale = 3;
@@ -70,6 +78,9 @@ export default class Game {
             this.SpawnCatch();
             //this.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));
 
+        };
+        this.SetCanvas = (options)=>{
+            this.canvas = options.canvas;
         };
         this.SpawnPlatform = (position, size)=> {
             // setup the platform

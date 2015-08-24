@@ -46,6 +46,7 @@ export default class GameObject {
             // remove it from this gameobjs
             var i = Game.instance.objs.indexOf(this);
             if ( i > -1 ){
+                Game.instance.objs[i] = null;
                 Game.instance.objs.splice(i,1);
             }
             //Game.instance.RecalculatePlatforms();

@@ -6,6 +6,9 @@ export default class Player extends Component{
         super(options);
         this.Die = ()=>{
             console.log("you died");
+            this.gameObject.Destroy();
+            Game.instance.reset();
+            Game.instance.init();
         };
     }
 }

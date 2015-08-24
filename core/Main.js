@@ -18,6 +18,7 @@ var canvas = document.getElementById("view"),
     options = {"canvas": canvas},
     _game = Game.instance;
 
-_game.init(options);
+_game.SetCanvas(options);
+_game.init();
 _input.Attach();
 _game.Loop();
