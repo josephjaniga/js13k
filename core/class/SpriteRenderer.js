@@ -75,10 +75,12 @@ export default class SpriteRenderer extends Component{
                 );
             }
             if ( this.tiled ){
+                //ctx.save();
                 ctx.translate(t.position.x, t.position.y);
                 var finalPattern = ctx.createPattern(this.patternCanvas, "repeat");
                 ctx.fillStyle = finalPattern;
                 ctx.fillRect(0, 0, t.size.x, t.size.y);
+                //ctx.restore();
                 ctx.translate(-t.position.x, -t.position.y);
             }
         };
