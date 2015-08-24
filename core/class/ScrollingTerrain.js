@@ -6,22 +6,21 @@ export default class ScrollingTerrain extends Component{
     constructor(options){
         super(options);
         //console.log("ScrollingTerrain | constructor");
-        this.speed = 2.5;
+        this.speed = options.speed || 2.5;
         this.link = null;
         this.Update = ()=>{
 
             // no link yet and on screen
-            if ( this.link === null && this.gameObject.name === "Platform" ){
+            if ( this.link === null && this.gameObject.name === "Platform" && this.gameObject.transform.position.x > -50 ){
 
-                var newSize = new Vector2(this.RandomRange(80,320),30),
-                    newPositionX = this.gameObject.transform.position.x - newSize.x - this.RandomRange(100,0),
+                var newSize = new Vector2(this.RandomRange(80,320),200),
+                    newPositionX = this.gameObject.transform.position.x - newSize.x - this.RandomRange(150,50),
                     newPositionY = this.gameObject.transform.position.y + this.RandomRange(30,-30);
 
                 // if the new platform is lower than current
                 if ( newPositionY > this.gameObject.transform.position.y ){
                     // we can add more distance
-
-                    var additionalDistance = newPositionY - this.gameObject.transform.position.y;
+                    var additionalDistance = (newPositionY - this.gameObject.transform.position.y) * 0.5;
                     //console.log("its lower so add more distance: " + additionalDistance + " " + newPositionX);
                     newPositionX -= additionalDistance;
                 }

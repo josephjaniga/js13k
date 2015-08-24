@@ -19,6 +19,10 @@ export default class Game {
     constructor(options) {
         //console.log("Game | constructor");
 
+        this.startTime = new Date();
+
+        this.paused = false;
+
         this.color = {
             black: "rgba(0,0,0,0)",
             dark: "rgba(0,0,0,0.5)",
@@ -32,13 +36,15 @@ export default class Game {
 
         this.objs = [];
 
+        this.speed = 2;
+
         // METHODS
         this.Update = ()=> {
-
-            this.objs.forEach((el)=> {
-                el.Update();
-            });
-
+            if ( !this.paused ){
+                this.objs.forEach((el)=> {
+                    el.Update();
+                });
+            }
         };
         this.Draw = ()=> {
             this.CTX.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -55,15 +61,21 @@ export default class Game {
             this.canvas.width = x;
             this.canvas.height = y;
         };
-        this.reset = ()=>{
-            this.objs.forEach((obj)=>{
-                obj.Destroy();
-            });
+        this.reset = (options)=>{
+            if ( options === "NonPlayer" ){
+                this.objs.forEach((obj)=>{
+                    if ( obj.name !== "Player" ){
+                        obj.Destroy();
+                    }
+                });
+            } else {
+                this.objs.forEach((obj)=>{
+                    obj.Destroy();
+                });
+            }
         };
         this.init = () => {
-
             this.reset();
-
             // PROPERTIES
             this.scale = 3;
             this.resolution = new Vector2(320, 188);
@@ -71,13 +83,11 @@ export default class Game {
             this.objs = [];
             this.ResizeCanvas(this.resolution.x * this.scale, this.resolution.y * this.scale);
             this.CTX.scale(this.scale, this.scale);
-
             // setup
-            this.SpawnPlayer(new Vector2(280, 0), new Vector2(12, 12));
-            this.SpawnPlatform(new Vector2(160,90), new Vector2(320,30));
+            this.SpawnPlayer(new Vector2(280, 130), new Vector2(15, 15));
+            this.SpawnPlatform(new Vector2(160,150), new Vector2(320,200));
             this.SpawnCatch();
             //this.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));
-
         };
         this.SetCanvas = (options)=>{
             this.canvas = options.canvas;
@@ -91,18 +101,18 @@ export default class Game {
                 size: size
             });
             platform.AddComponent(new Collider());
-            platform.AddComponent(new ScrollingTerrain());
+            platform.AddComponent(new ScrollingTerrain({speed:this.speed}));
             platform.AddComponent(new RectRenderer());
             platform.color = Game.instance.color.light;
             platform.name = "Platform";
 
             var deadArea = new GameObject();
             deadArea.transform = new Transform({
-                position: new Vector2(position.x + size.x, position.y + 2),
-                size: new Vector2(1, size.y - 4)
+                position: new Vector2(position.x + size.x, position.y + 5),
+                size: new Vector2(2, size.y - 10)
             });
             deadArea.AddComponent(new Collider());
-            deadArea.AddComponent(new ScrollingTerrain());
+            deadArea.AddComponent(new ScrollingTerrain({speed:this.speed}));
             deadArea.AddComponent(new RectRenderer());
             deadArea.color = "rgba(255,0,0,1)";
             deadArea.name = "CollisionDeath";
@@ -149,6 +159,15 @@ export default class Game {
 
             //this.RecalculatePlatforms();
             this.objs.push(catcher);
+        };
+        this.SetScrollingTerrainSpeed = (speed)=>{
+            this.objs.forEach((obj)=> {
+                this.speed = speed;
+                var st = obj.GetComponent("ScrollTerrain");
+                if ( st !== null ){
+                    st.speed = this.speed;
+                }
+            });
         };
     }
     static get instance() {
