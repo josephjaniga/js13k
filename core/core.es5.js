@@ -66,7 +66,7 @@ _game.init();
 _input.Attach();
 _game.Loop();
 
-},{"./class/Collider.js":2,"./class/Component.js":3,"./class/Game.js":4,"./class/GameObject.js":5,"./class/Input.js":6,"./class/Jump.js":7,"./class/PhysicsBody.js":8,"./class/Rect.js":10,"./class/RectRenderer.js":11,"./class/ScrollingTerrain.js":12,"./class/SpriteRenderer.js":13,"./class/Transform.js":15,"./class/Vector2.js":16}],2:[function(require,module,exports){
+},{"./class/Collider.js":2,"./class/Component.js":3,"./class/Game.js":5,"./class/GameObject.js":6,"./class/Input.js":7,"./class/Jump.js":8,"./class/PhysicsBody.js":9,"./class/Rect.js":11,"./class/RectRenderer.js":12,"./class/ScrollingTerrain.js":13,"./class/SpriteRenderer.js":14,"./class/Transform.js":16,"./class/Vector2.js":17}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -128,6 +128,51 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _ComponentJs = require('./Component.js');
+
+var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
+
+var _InputJs = require("./Input.js");
+
+var _InputJs2 = _interopRequireDefault(_InputJs);
+
+var DestroyOnSpace = (function (_Component) {
+    _inherits(DestroyOnSpace, _Component);
+
+    function DestroyOnSpace(options) {
+        var _this = this;
+
+        _classCallCheck(this, DestroyOnSpace);
+
+        _get(Object.getPrototypeOf(DestroyOnSpace.prototype), "constructor", this).call(this, options);
+        this.Update = function () {
+            if (_InputJs2["default"].instance.isSpaceDown) {
+                _this.gameObject.Destroy();
+            }
+        };
+    }
+
+    return DestroyOnSpace;
+})(_ComponentJs2["default"]);
+
+exports["default"] = DestroyOnSpace;
+module.exports = exports["default"];
+
+},{"./Component.js":3,"./Input.js":7}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -141,6 +186,10 @@ var _ColliderJs2 = _interopRequireDefault(_ColliderJs);
 var _ComponentJs = require("./Component.js");
 
 var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
+
+var _DestroyOnSpaceJs = require("./DestroyOnSpace.js");
+
+var _DestroyOnSpaceJs2 = _interopRequireDefault(_DestroyOnSpaceJs);
 
 var _GameObjectJs = require("./GameObject.js");
 
@@ -203,6 +252,7 @@ var Game = (function () {
 
         this.startTime = new Date();
 
+        this.hasStarted = false;
         this.paused = false;
 
         this.color = {
@@ -222,6 +272,10 @@ var Game = (function () {
 
         // METHODS
         this.Update = function () {
+            if (!_this.hasStarted && _InputJs2["default"].instance.isSpaceDown) {
+                _this.StartGame();
+                _this.hasStarted = true;
+            }
             if (!_this.paused) {
                 _this.objs.forEach(function (el) {
                     el.Update();
@@ -244,6 +298,7 @@ var Game = (function () {
             _this.canvas.height = y;
         };
         this.reset = function (options) {
+            _this.hasStarted = false;
             if (options === "NonPlayer") {
                 _this.objs.forEach(function (obj) {
                     if (obj.name !== "Player") {
@@ -267,10 +322,11 @@ var Game = (function () {
             _this.CTX.scale(_this.scale, _this.scale);
             // setup
             _this.SpawnStartMenu();
+        };
+        this.StartGame = function () {
             _this.SpawnPlayer(new _Vector2Js2["default"](280, 130), new _Vector2Js2["default"](15, 15));
             _this.SpawnPlatform(new _Vector2Js2["default"](160, 150), new _Vector2Js2["default"](320, 200));
             _this.SpawnCatch();
-            //this.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));
         };
         this.SetCanvas = function (options) {
             _this.canvas = options.canvas;
@@ -353,15 +409,34 @@ var Game = (function () {
             // setup the title text
             var title = new _GameObjectJs2["default"]();
             title.transform = new _TransformJs2["default"]({
-                position: new _Vector2Js2["default"](_this.resolution.x * _this.scale / 2, _this.resolution.y * _this.scale / 2),
+                position: new _Vector2Js2["default"](_this.resolution.x / 2, _this.resolution.y / 2 - 50),
                 size: _Vector2Js2["default"].zero()
             });
-            title.AddComponent(new _TextRendererJs2["default"]());
-
-            console.log(title.transform.position.x, title.transform.position.y);
-
-            //this.RecalculatePlatforms();
+            title.AddComponent(new _TextRendererJs2["default"]({
+                text: 'Reversed'.split("").reverse().join(""),
+                font: '30px sans-serif',
+                fontWeight: 'bolder',
+                textAlign: 'center',
+                fillStyle: 'white'
+            }));
+            title.AddComponent(new _DestroyOnSpaceJs2["default"]());
             _this.objs.push(title);
+
+            // setup the title text
+            var subtitle = new _GameObjectJs2["default"]();
+            subtitle.transform = new _TransformJs2["default"]({
+                position: new _Vector2Js2["default"](_this.resolution.x / 2, _this.resolution.y / 2 - 35),
+                size: _Vector2Js2["default"].zero()
+            });
+            subtitle.AddComponent(new _TextRendererJs2["default"]({
+                text: 'Press Space to Start'.split("").reverse().join(""),
+                font: '8px sans-serif',
+                fontWeight: 'bolder',
+                textAlign: 'center',
+                fillStyle: 'white'
+            }));
+            subtitle.AddComponent(new _DestroyOnSpaceJs2["default"]());
+            _this.objs.push(subtitle);
         };
     }
 
@@ -386,7 +461,7 @@ var Game = (function () {
 exports["default"] = Game;
 module.exports = exports["default"];
 
-},{"./Collider.js":2,"./Component.js":3,"./GameObject.js":5,"./Input.js":6,"./Jump.js":7,"./PhysicsBody.js":8,"./Player.js":9,"./Rect.js":10,"./RectRenderer.js":11,"./ScrollingTerrain.js":12,"./SpriteRenderer.js":13,"./TextRenderer.js":14,"./Transform.js":15,"./Vector2.js":16}],5:[function(require,module,exports){
+},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./PhysicsBody.js":9,"./Player.js":10,"./Rect.js":11,"./RectRenderer.js":12,"./ScrollingTerrain.js":13,"./SpriteRenderer.js":14,"./TextRenderer.js":15,"./Transform.js":16,"./Vector2.js":17}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -475,7 +550,7 @@ var GameObject = function GameObject() {
 exports["default"] = GameObject;
 module.exports = exports["default"];
 
-},{"./Game.js":4,"./Transform.js":15,"./Vector2.js":16}],6:[function(require,module,exports){
+},{"./Game.js":5,"./Transform.js":16,"./Vector2.js":17}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -536,7 +611,7 @@ var Input = (function () {
 exports['default'] = Input;
 module.exports = exports['default'];
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -635,7 +710,7 @@ var Jump = (function (_Component) {
 exports["default"] = Jump;
 module.exports = exports["default"];
 
-},{"./Component.js":3}],8:[function(require,module,exports){
+},{"./Component.js":3}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -771,7 +846,7 @@ var PhysicsBody = (function (_Component) {
 exports["default"] = PhysicsBody;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":4,"./Rect.js":10,"./Vector2.js":16}],9:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Rect.js":11,"./Vector2.js":17}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -818,7 +893,7 @@ var Player = (function (_Component) {
 exports["default"] = Player;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":4}],10:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -859,7 +934,7 @@ var Rect = function Rect(options) {
 exports['default'] = Rect;
 module.exports = exports['default'];
 
-},{"./Vector2.js":16}],11:[function(require,module,exports){
+},{"./Vector2.js":17}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -902,7 +977,7 @@ var RectRenderer = (function (_Component) {
 exports['default'] = RectRenderer;
 module.exports = exports['default'];
 
-},{"./Component.js":3}],12:[function(require,module,exports){
+},{"./Component.js":3}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -985,7 +1060,7 @@ var ScrollingTerrain = (function (_Component) {
 exports["default"] = ScrollingTerrain;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":4,"./Vector2.js":16}],13:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Vector2.js":17}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1081,7 +1156,7 @@ var SpriteRenderer = (function (_Component) {
 exports["default"] = SpriteRenderer;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":4,"./Vector2.js":16}],14:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Vector2.js":17}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1109,12 +1184,17 @@ var TextRenderer = (function (_Component) {
         _classCallCheck(this, TextRenderer);
 
         _get(Object.getPrototypeOf(TextRenderer.prototype), 'constructor', this).call(this, options);
-        this.text = "Testing...";
+        this.text = options.text || "TEST";
+        this.font = options.font || '10px sans-serif';
+        this.fontWeight = options.fontWeight || 'normal';
+        this.textAlign = options.textAlign || 'start';
+        this.fillStyle = options.fillStyle || 'black';
         this.Update = function () {};
         this.Draw = function (ctx) {
-            ctx.font = '30pt Calibri';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = 'white';
+            ctx.font = _this.font;
+            ctx.fontWeight = _this.fontWeight;
+            ctx.textAlign = _this.textAlign;
+            ctx.fillStyle = _this.fillStyle;
             ctx.fillText(_this.text, _this.gameObject.transform.position.x, _this.gameObject.transform.position.y);
         };
     }
@@ -1125,7 +1205,7 @@ var TextRenderer = (function (_Component) {
 exports['default'] = TextRenderer;
 module.exports = exports['default'];
 
-},{"./Component.js":3}],15:[function(require,module,exports){
+},{"./Component.js":3}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1162,7 +1242,7 @@ var Transform = (function (_Component) {
 exports["default"] = Transform;
 module.exports = exports["default"];
 
-},{"./Component.js":3}],16:[function(require,module,exports){
+},{"./Component.js":3}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

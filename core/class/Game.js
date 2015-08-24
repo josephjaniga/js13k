@@ -1,5 +1,6 @@
 import Collider from "./Collider.js";
 import Component from "./Component.js";
+import DestroyOnSpace from "./DestroyOnSpace.js";
 import GameObject from "./GameObject.js";
 import Input from "./Input.js";
 import Jump from "./Jump.js";
@@ -22,6 +23,7 @@ export default class Game {
 
         this.startTime = new Date();
 
+        this.hasStarted = false;
         this.paused = false;
 
         this.color = {
@@ -41,6 +43,10 @@ export default class Game {
 
         // METHODS
         this.Update = ()=> {
+            if ( !this.hasStarted && Input.instance.isSpaceDown ){
+                this.StartGame();
+                this.hasStarted = true;
+            }
             if ( !this.paused ){
                 this.objs.forEach((el)=> {
                     el.Update();
@@ -63,6 +69,7 @@ export default class Game {
             this.canvas.height = y;
         };
         this.reset = (options)=>{
+            this.hasStarted = false;
             if ( options === "NonPlayer" ){
                 this.objs.forEach((obj)=>{
                     if ( obj.name !== "Player" ){
@@ -86,10 +93,11 @@ export default class Game {
             this.CTX.scale(this.scale, this.scale);
             // setup
             this.SpawnStartMenu();
+        };
+        this.StartGame = ()=>{
             this.SpawnPlayer(new Vector2(280, 130), new Vector2(15, 15));
             this.SpawnPlatform(new Vector2(160,150), new Vector2(320,200));
             this.SpawnCatch();
-            //this.SpawnPlatform(new Vector2(-10,140), new Vector2(160,20));
         };
         this.SetCanvas = (options)=>{
             this.canvas = options.canvas;
@@ -174,19 +182,45 @@ export default class Game {
         this.SpawnStartMenu = ()=>{
             // setup the title text
             var title = new GameObject();
-            title.transform = new Transform({
-                position: new Vector2(
-                        this.resolution.x*this.scale/2,
-                        this.resolution.y*this.scale/2
+                title.transform = new Transform({
+                    position: new Vector2(
+                            this.resolution.x/2,
+                            this.resolution.y/2-50
+                        ),
+                    size: Vector2.zero()
+                });
+                title.AddComponent(new TextRenderer(
+                    {
+                        text: 'Reversed'.split("").reverse().join(""),
+                        font: '30px sans-serif',
+                        fontWeight: 'bolder',
+                        textAlign: 'center',
+                        fillStyle: 'white'
+                    }
+                ));
+                title.AddComponent(new DestroyOnSpace());
+                this.objs.push(title);
+
+            // setup the title text
+            var subtitle = new GameObject();
+                subtitle.transform = new Transform({
+                    position: new Vector2(
+                            this.resolution.x/2,
+                            this.resolution.y/2-35
                     ),
-                size: Vector2.zero()
-            });
-            title.AddComponent(new TextRenderer());
-
-            console.log(title.transform.position.x, title.transform.position.y);
-
-            //this.RecalculatePlatforms();
-            this.objs.push(title);
+                    size: Vector2.zero()
+                });
+                subtitle.AddComponent(new TextRenderer(
+                    {
+                        text: 'Press Space to Start'.split("").reverse().join(""),
+                        font: '8px sans-serif',
+                        fontWeight: 'bolder',
+                        textAlign: 'center',
+                        fillStyle: 'white'
+                    }
+                ));
+                subtitle.AddComponent(new DestroyOnSpace());
+                this.objs.push(subtitle);
         };
     }
     static get instance() {
