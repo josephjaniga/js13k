@@ -26,13 +26,19 @@ export default class Jump extends Component{
 
             if ( this.input.isSpaceDown && this.pb ) {
 
+                // the double jump
                 if ( this.jumpOne && !this.doubleJump && this.lastJumpTime + this.jumpCD <= Date.now() ){
-                    this.Jump();
+                    var f = this.jumpForce;
+                    if ( this.pb.velocity.y > 1.9 ){
+                        f = this.jumpForce*1.1;
+                    }
+                    this.Jump(f);
                     this.doubleJump = true;
                 }
 
+                // the first jump
                 if ( !this.jumpOne && this.pb.grounded && this.lastJumpTime + this.jumpCD <= Date.now()) {
-                    this.Jump();
+                    this.Jump(this.jumpForce);
                     this.pb.grounded = false;
                     this.jumpOne = true;
                 }
@@ -50,14 +56,14 @@ export default class Jump extends Component{
                 this.SpriteRenderer.currentAnimation = 1;
             }
         };
-        this.Jump = ()=>{
+        this.Jump = (force)=>{
             if ( this.lastJumpTime + this.jumpCD <= Date.now() ){
                 this.lastJumpTime = Date.now();
                 if ( this.gameObject ){
                     this.pb = this.gameObject.GetComponent("PhysicsBody");
                 }
                 if ( this.pb ){
-                    this.pb.velocity.y = this.jumpForce;
+                    this.pb.velocity.y = force;
                 }
             }
         };

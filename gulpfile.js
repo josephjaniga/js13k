@@ -4,11 +4,9 @@ var babelify    = require('babelify'),
     browserify  = require('browserify'),
     del         = require('del'),
     gulp        = require('gulp'),
-    babel       = require('gulp-babel'),
-    concat      = require('gulp-concat'),
+    minify      = require('gulp-minify'),
     minifyHTML  = require('gulp-minify-html'),
     size        = require('gulp-size'),
-    uglify      = require('gulp-uglify'),
     watch       = require('gulp-watch'),
     zip         = require('gulp-zip'),
     source      = require('vinyl-source-stream'),
@@ -21,7 +19,7 @@ var babelify    = require('babelify'),
     DEV_CORE_DEST   = 'core/',
     INDEX_SOURCE    = 'index.html',
     INDEX_DEST      = 'build/',
-    ZIP_SOURCE      = ['./build/**','./build/**/*','./build/**/*.*','build/**', 'build/'],
+    ZIP_SOURCE      = ['./build/**','./build/**/*','./build/**/*.*','build/**', 'build/', '!build/core/core.es5.js'],
     ZIP_DEST        = 'zip/';
 
 
@@ -60,17 +58,18 @@ gulp.task('buildIndex', function() {
 });
 
 gulp.task('buildCore', function() {
-    del(["core/core.es5.min.js"]);
+    //del(["core/core.es5*"]);
     return browserify({
             entries: "./core/Main.js",
             debug: false
         })
         .transform(babelify)
         .bundle()
-        .pipe(source('core.es5.min.js'))
+        .pipe(source('core.es5.js'))
         .pipe(buffer())
-        //.pipe(uglify(false))
-        //.pipe(buffer())
+        .pipe(minify({
+            ignoreFiles: ['min.js']
+        }))
         .pipe(gulp.dest(CORE_DEST))
         .pipe(gulp.dest(DEV_CORE_DEST));
 });

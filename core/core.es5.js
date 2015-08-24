@@ -552,7 +552,7 @@ var Jump = (function (_Component) {
         this.jumpOne = false;
         this.doubleJump = false;
 
-        this.jumpForce = -8;
+        this.jumpForce = -9.5;
 
         this.lastJumpTime = -9999;
         this.jumpCD = 300;
@@ -568,13 +568,19 @@ var Jump = (function (_Component) {
 
             if (_this.input.isSpaceDown && _this.pb) {
 
+                // the double jump
                 if (_this.jumpOne && !_this.doubleJump && _this.lastJumpTime + _this.jumpCD <= Date.now()) {
-                    _this.Jump();
+                    var f = _this.jumpForce;
+                    if (_this.pb.velocity.y > 2) {
+                        f = _this.jumpForce * 1.25;
+                    }
+                    _this.Jump(f);
                     _this.doubleJump = true;
                 }
 
+                // the first jump
                 if (!_this.jumpOne && _this.pb.grounded && _this.lastJumpTime + _this.jumpCD <= Date.now()) {
-                    _this.Jump();
+                    _this.Jump(_this.jumpForce);
                     _this.pb.grounded = false;
                     _this.jumpOne = true;
                 }
@@ -591,14 +597,14 @@ var Jump = (function (_Component) {
                 _this.SpriteRenderer.currentAnimation = 1;
             }
         };
-        this.Jump = function () {
+        this.Jump = function (force) {
             if (_this.lastJumpTime + _this.jumpCD <= Date.now()) {
                 _this.lastJumpTime = Date.now();
                 if (_this.gameObject) {
                     _this.pb = _this.gameObject.GetComponent("PhysicsBody");
                 }
                 if (_this.pb) {
-                    _this.pb.velocity.y = _this.jumpForce;
+                    _this.pb.velocity.y = force;
                 }
             }
         };
