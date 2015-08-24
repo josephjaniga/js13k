@@ -1162,12 +1162,12 @@ var SpriteRenderer = (function (_Component) {
                 ctx.drawImage(_this.sprite, _this.animations[_this.currentAnimation].frames[_this.frameIndex] * _this.frameSize.x, 0, _this.frameSize.x, _this.frameSize.y, t.position.x, t.position.y, t.size.x, t.size.y);
             }
             if (_this.tiled) {
+                //ctx.save();
                 ctx.translate(t.position.x, t.position.y);
                 var finalPattern = ctx.createPattern(_this.patternCanvas, "repeat");
-                //this.patternContext.translate(t.position.x, t.position.y);
                 ctx.fillStyle = finalPattern;
                 ctx.fillRect(0, 0, t.size.x, t.size.y);
-                //ctx.drawImage(this.patternCanvas, t.position.x, t.position.y, t.size.x, t.size.y)
+                //ctx.restore();
                 ctx.translate(-t.position.x, -t.position.y);
             }
         };
