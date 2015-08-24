@@ -9,6 +9,7 @@ import Rect from "./Rect.js";
 import RectRenderer from "./RectRenderer.js";
 import ScrollingTerrain from "./ScrollingTerrain.js";
 import SpriteRenderer from "./SpriteRenderer.js";
+import TextRenderer from "./TextRenderer.js";
 import Transform from "./Transform.js";
 import Vector2 from "./Vector2.js";
 
@@ -84,6 +85,7 @@ export default class Game {
             this.ResizeCanvas(this.resolution.x * this.scale, this.resolution.y * this.scale);
             this.CTX.scale(this.scale, this.scale);
             // setup
+            this.SpawnStartMenu();
             this.SpawnPlayer(new Vector2(280, 130), new Vector2(15, 15));
             this.SpawnPlatform(new Vector2(160,150), new Vector2(320,200));
             this.SpawnCatch();
@@ -169,6 +171,23 @@ export default class Game {
                 }
             });
         };
+        this.SpawnStartMenu = ()=>{
+            // setup the title text
+            var title = new GameObject();
+            title.transform = new Transform({
+                position: new Vector2(
+                        this.resolution.x*this.scale/2,
+                        this.resolution.y*this.scale/2
+                    ),
+                size: Vector2.zero()
+            });
+            title.AddComponent(new TextRenderer());
+
+            console.log(title.transform.position.x, title.transform.position.y);
+
+            //this.RecalculatePlatforms();
+            this.objs.push(title);
+        };
     }
     static get instance() {
         if (!this[singleton]) {
@@ -182,5 +201,3 @@ export default class Game {
  *  using ARROW FUNCTIONS here in ES6 for lexical scope inheritance
  *  they assume the scope (this) from their parent scoping
  */
-
-
