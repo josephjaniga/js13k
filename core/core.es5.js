@@ -341,8 +341,13 @@ var Game = (function () {
             });
             platform.AddComponent(new _ColliderJs2["default"]());
             platform.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _this.speed }));
-            platform.AddComponent(new _RectRendererJs2["default"]());
-            platform.color = Game.instance.color.light;
+            //            platform.AddComponent(new RectRenderer());
+            //            platform.color = Game.instance.color.light;
+            platform.AddComponent(new _SpriteRendererJs2["default"]({
+                animated: false,
+                tiled: true,
+                tiledIndex: 0
+            }));
             platform.name = "Platform";
 
             var deadArea = new _GameObjectJs2["default"]();
@@ -373,6 +378,7 @@ var Game = (function () {
             player.AddComponent(new _PhysicsBodyJs2["default"]({ kinematic: false }));
             player.AddComponent(new _JumpJs2["default"]({ input: _InputJs2["default"].instance }));
             player.AddComponent(new _SpriteRendererJs2["default"]({
+                animated: true,
                 animations: [{ name: "Walk", frames: [0, 1, 2, 3] }, { name: "Jump", frames: [4] }]
             }));
             player.color = _this.color.transparent;
@@ -1097,9 +1103,6 @@ var SpriteRenderer = (function (_Component) {
 
         _get(Object.getPrototypeOf(SpriteRenderer.prototype), "constructor", this).call(this, options);
         //console.log("SpriteRenderer | constructor");
-
-        //this.animations = options.animations;
-
         /**
          *  [
          *      { name:"Anim-1", frames:[0 ... N] },
@@ -1108,7 +1111,10 @@ var SpriteRenderer = (function (_Component) {
          *  ]
          * @type {animations|*|Array}
          */
-        this.animations = options.animations;
+        this.animations = options.animations || [];
+        this.animated = options.animated || false;
+        this.tiled = options.tiled || false;
+        this.tiledIndex = options.tiledIndex || null;
         this.lastAnimation = 0;
         this.currentAnimation = 0;
 
@@ -1120,33 +1126,50 @@ var SpriteRenderer = (function (_Component) {
         this.tickCount = 0;
         this.ticksPerFrame = 12;
 
+        this.patternCanvas = document.createElement('canvas');
+        this.patternCanvas.width = 8;
+        this.patternCanvas.height = 8;
+        this.patternContext = this.patternCanvas.getContext('2d');
+        this.patternContext.drawImage(this.sprite, this.frameSize.x * .5, this.frameSize.y * .5, 8, 8, 0, 0, 8, 8);
+
         this.Update = function () {
-
-            _this.animations.forEach(function (anim, index) {
-                if (index === _this.currentAnimation) {
-                    _this.totalFrames = anim.frames.length;
-                    if (_this.lastAnimation != _this.currentAnimation) {
-                        _this.frameIndex = 0;
-                        _this.tickCount = 0;
-                        _this.lastAnimation = _this.currentAnimation;
+            if (_this.animated) {
+                _this.animations.forEach(function (anim, index) {
+                    if (index === _this.currentAnimation) {
+                        _this.totalFrames = anim.frames.length;
+                        if (_this.lastAnimation != _this.currentAnimation) {
+                            _this.frameIndex = 0;
+                            _this.tickCount = 0;
+                            _this.lastAnimation = _this.currentAnimation;
+                        }
                     }
-                }
-            });
-
-            _this.tickCount++;
-            if (_this.tickCount > _this.ticksPerFrame) {
-                _this.tickCount = 0;
-                if (_this.frameIndex < _this.totalFrames - 1) {
-                    _this.frameIndex++;
-                } else {
-                    _this.frameIndex = 0;
+                });
+                _this.tickCount++;
+                if (_this.tickCount > _this.ticksPerFrame) {
+                    _this.tickCount = 0;
+                    if (_this.frameIndex < _this.totalFrames - 1) {
+                        _this.frameIndex++;
+                    } else {
+                        _this.frameIndex = 0;
+                    }
                 }
             }
         };
 
         this.Draw = function (ctx) {
             var t = _this.gameObject.transform;
-            ctx.drawImage(_this.sprite, _this.animations[_this.currentAnimation].frames[_this.frameIndex] * _this.frameSize.x, 0, _this.frameSize.x, _this.frameSize.y, t.position.x, t.position.y, t.size.x, t.size.y);
+            if (_this.animated) {
+                ctx.drawImage(_this.sprite, _this.animations[_this.currentAnimation].frames[_this.frameIndex] * _this.frameSize.x, 0, _this.frameSize.x, _this.frameSize.y, t.position.x, t.position.y, t.size.x, t.size.y);
+            }
+            if (_this.tiled) {
+                ctx.translate(t.position.x, t.position.y);
+                var finalPattern = ctx.createPattern(_this.patternCanvas, "repeat");
+                //this.patternContext.translate(t.position.x, t.position.y);
+                ctx.fillStyle = finalPattern;
+                ctx.fillRect(0, 0, t.size.x, t.size.y);
+                //ctx.drawImage(this.patternCanvas, t.position.x, t.position.y, t.size.x, t.size.y)
+                ctx.translate(-t.position.x, -t.position.y);
+            }
         };
     }
 

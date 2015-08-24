@@ -112,8 +112,13 @@ export default class Game {
             });
             platform.AddComponent(new Collider());
             platform.AddComponent(new ScrollingTerrain({speed:this.speed}));
-            platform.AddComponent(new RectRenderer());
-            platform.color = Game.instance.color.light;
+//            platform.AddComponent(new RectRenderer());
+//            platform.color = Game.instance.color.light;
+            platform.AddComponent(new SpriteRenderer({
+                animated: false,
+                tiled: true,
+                tiledIndex: 0
+            }));
             platform.name = "Platform";
 
             var deadArea = new GameObject();
@@ -144,6 +149,7 @@ export default class Game {
             player.AddComponent(new PhysicsBody({kinematic: false}));
             player.AddComponent(new Jump({input: Input.instance}));
             player.AddComponent(new SpriteRenderer({
+                animated: true,
                 animations: [
                     {name: "Walk", frames: [0, 1, 2, 3]},
                     {name: "Jump", frames: [4]}

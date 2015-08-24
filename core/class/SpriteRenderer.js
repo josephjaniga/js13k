@@ -6,9 +6,6 @@ export default class SpriteRenderer extends Component{
     constructor(options){
         super(options);
         //console.log("SpriteRenderer | constructor");
-
-        //this.animations = options.animations;
-
         /**
          *  [
          *      { name:"Anim-1", frames:[0 ... N] },
@@ -17,7 +14,10 @@ export default class SpriteRenderer extends Component{
          *  ]
          * @type {animations|*|Array}
          */
-        this.animations = options.animations;
+        this.animations = options.animations || [];
+        this.animated = options.animated || false;
+        this.tiled = options.tiled || false;
+        this.tiledIndex = options.tiledIndex || null;
         this.lastAnimation = 0;
         this.currentAnimation = 0;
 
@@ -29,43 +29,58 @@ export default class SpriteRenderer extends Component{
         this.tickCount = 0;
         this.ticksPerFrame = 12;
 
+        this.patternCanvas = document.createElement('canvas');
+        this.patternCanvas.width = 8;
+        this.patternCanvas.height = 8;
+        this.patternContext = this.patternCanvas.getContext('2d');
+        this.patternContext.drawImage(this.sprite, this.frameSize.x*.5, this.frameSize.y*.5, 8, 8, 0, 0, 8, 8);
+
         this.Update = ()=>{
-
-            this.animations.forEach((anim, index)=>{
-                if ( index === this.currentAnimation ){
-                    this.totalFrames = anim.frames.length;
-                    if ( this.lastAnimation != this.currentAnimation ){
-                        this.frameIndex = 0;
-                        this.tickCount = 0;
-                        this.lastAnimation = this.currentAnimation;
+            if ( this.animated ){
+                this.animations.forEach((anim, index)=>{
+                    if ( index === this.currentAnimation ){
+                        this.totalFrames = anim.frames.length;
+                        if ( this.lastAnimation != this.currentAnimation ){
+                            this.frameIndex = 0;
+                            this.tickCount = 0;
+                            this.lastAnimation = this.currentAnimation;
+                        }
                     }
-                }
-            });
-
-            this.tickCount++;
-            if ( this.tickCount > this.ticksPerFrame ) {
-                this.tickCount = 0;
-                if (this.frameIndex < this.totalFrames - 1) {
-                    this.frameIndex++;
-                } else {
-                    this.frameIndex = 0;
+                });
+                this.tickCount++;
+                if ( this.tickCount > this.ticksPerFrame ) {
+                    this.tickCount = 0;
+                    if (this.frameIndex < this.totalFrames - 1) {
+                        this.frameIndex++;
+                    } else {
+                        this.frameIndex = 0;
+                    }
                 }
             }
         };
 
         this.Draw = (ctx)=>{
             var t = this.gameObject.transform;
-            ctx.drawImage(
-                this.sprite,
-                this.animations[this.currentAnimation].frames[this.frameIndex] * this.frameSize.x,
-                0,
-                this.frameSize.x,
-                this.frameSize.y,
-                t.position.x,
-                t.position.y,
-                t.size.x,
-                t.size.y
-            );
+            if ( this.animated ){
+                ctx.drawImage(
+                    this.sprite,
+                    this.animations[this.currentAnimation].frames[this.frameIndex] * this.frameSize.x,
+                    0,
+                    this.frameSize.x,
+                    this.frameSize.y,
+                    t.position.x,
+                    t.position.y,
+                    t.size.x,
+                    t.size.y
+                );
+            }
+            if ( this.tiled ){
+                ctx.translate(t.position.x, t.position.y);
+                var finalPattern = ctx.createPattern(this.patternCanvas, "repeat");
+                ctx.fillStyle = finalPattern;
+                ctx.fillRect(0, 0, t.size.x, t.size.y);
+                ctx.translate(-t.position.x, -t.position.y);
+            }
         };
 
     }
