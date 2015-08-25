@@ -1,28 +1,32 @@
-//crude and incomplete but it works
-
-var fs = require('fs');
-var Buffer = require('buffer').Buffer;
-var constants = require('constants');
-var size = 0;
-var encoded = '';
-var fileName = '';
-var wavFileName = '';
-var base64FileName = '';
+var fs              = require('fs'),
+    Buffer          = require('buffer').Buffer,
+    constants       = require('constants'),
+    size            = 0,
+    encoded         = '',
+    fileName        = '',
+    inputFileName   = '',
+    base64FileName  = '',
+    fileExtension   = '';
 
 if(process.argv.length != 3){
     console.log("you didn't specify the name of the file to encode.");
     return;
 } else {
     fileName = process.argv[2];
-    wavFileName = fileName;
-    base64FileName = fileName + '.txt'
+    inputFileName = fileName;
+    base64FileName = fileName + '.txt';
+
+    // remove the path
+    fileExtension = inputFileName.split('.');
+    fileExtension = fileExtension[fileExtension.length-1];
+    console.log(fileExtension);
 }
 
-fs.lstat(wavFileName, function(err, stats) {
+fs.lstat(inputFileName, function(err, stats) {
     size = stats.size;
 });
 
-fs.open(wavFileName, 'r', function(status, fd) {
+fs.open(inputFileName, 'r', function(status, fd) {
     if (status) {
         console.log(status.message);
         return;
@@ -31,7 +35,7 @@ fs.open(wavFileName, 'r', function(status, fd) {
     var buffer = new Buffer(size);
     fs.read(fd, buffer, 0, size, 0, function(err, num) {
         encoded = buffer.toString('base64', 0, num);
-        encoded = 'var ' + fileName + ' = "' + encoded + '";';
+        encoded = '"' + 'data:audio/'+fileExtension+';base64,' + encoded + '";';
         fs.writeFile(base64FileName, encoded, function(err) {
             if(err) {
                 console.log(err);
