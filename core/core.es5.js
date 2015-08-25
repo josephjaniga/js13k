@@ -938,7 +938,7 @@ var Particle = (function (_Component) {
         _classCallCheck(this, Particle);
 
         _get(Object.getPrototypeOf(Particle.prototype), "constructor", this).call(this, options);
-        this.lifeTime = 1000;
+        this.lifeTime = 500;
         this.startTime = Date.now();
 
         //this.r = 255;
@@ -1123,7 +1123,7 @@ var PhysicsBody = (function (_Component) {
                     }));
                     jumpParticle.AddComponent(new _ParticleJs2["default"]());
                     jumpParticle.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _GameJs2["default"].instance.speed }));
-                    jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 10;
+                    jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 7;
                     _GameJs2["default"].instance.objs.push(jumpParticle);
                 }
 

@@ -4,7 +4,7 @@ export default class Particle extends Component{
 
     constructor(options){
         super(options);
-        this.lifeTime = 1000;
+        this.lifeTime = 500;
         this.startTime = Date.now();
 
         //this.r = 255;

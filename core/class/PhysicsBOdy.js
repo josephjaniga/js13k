@@ -119,7 +119,7 @@ export default class PhysicsBody extends Component {
                     }));
                     jumpParticle.AddComponent(new Particle());
                     jumpParticle.AddComponent(new ScrollingTerrain({speed:Game.instance.speed}));
-                    jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 10;
+                    jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 7;
                     Game.instance.objs.push(jumpParticle);
                 }
 
