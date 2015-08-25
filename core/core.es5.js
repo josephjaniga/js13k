@@ -66,7 +66,7 @@ _game.init();
 _input.Attach();
 _game.Loop();
 
-},{"./class/Collider.js":2,"./class/Component.js":3,"./class/Game.js":5,"./class/GameObject.js":6,"./class/Input.js":7,"./class/Jump.js":8,"./class/PhysicsBody.js":9,"./class/Rect.js":11,"./class/RectRenderer.js":12,"./class/ScrollingTerrain.js":13,"./class/SpriteRenderer.js":14,"./class/Transform.js":16,"./class/Vector2.js":17}],2:[function(require,module,exports){
+},{"./class/Collider.js":2,"./class/Component.js":3,"./class/Game.js":5,"./class/GameObject.js":6,"./class/Input.js":7,"./class/Jump.js":8,"./class/PhysicsBody.js":10,"./class/Rect.js":12,"./class/RectRenderer.js":13,"./class/ScrollingTerrain.js":14,"./class/SpriteRenderer.js":15,"./class/Transform.js":17,"./class/Vector2.js":18}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -324,7 +324,7 @@ var Game = (function () {
             _this.SpawnStartMenu();
         };
         this.StartGame = function () {
-            _this.SpawnPlayer(new _Vector2Js2["default"](280, 130), new _Vector2Js2["default"](15, 15));
+            _this.SpawnPlayer(new _Vector2Js2["default"](250, 130), new _Vector2Js2["default"](15, 15));
             _this.SpawnPlatform(new _Vector2Js2["default"](160, 150), new _Vector2Js2["default"](320, 200));
             _this.SpawnCatch();
         };
@@ -379,7 +379,7 @@ var Game = (function () {
             player.AddComponent(new _JumpJs2["default"]({ input: _InputJs2["default"].instance }));
             player.AddComponent(new _SpriteRendererJs2["default"]({
                 animated: true,
-                animations: [{ name: "Walk", frames: [0, 1, 2, 3] }, { name: "Jump", frames: [4] }]
+                animations: [{ name: "Walk", frames: [0, 1, 2, 1] }, { name: "Jump", frames: [3] }]
             }));
             player.color = _this.color.transparent;
             player.name = "Player";
@@ -467,7 +467,7 @@ var Game = (function () {
 exports["default"] = Game;
 module.exports = exports["default"];
 
-},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./PhysicsBody.js":9,"./Player.js":10,"./Rect.js":11,"./RectRenderer.js":12,"./ScrollingTerrain.js":13,"./SpriteRenderer.js":14,"./TextRenderer.js":15,"./Transform.js":16,"./Vector2.js":17}],6:[function(require,module,exports){
+},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./PhysicsBody.js":10,"./Player.js":11,"./Rect.js":12,"./RectRenderer.js":13,"./ScrollingTerrain.js":14,"./SpriteRenderer.js":15,"./TextRenderer.js":16,"./Transform.js":17,"./Vector2.js":18}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -556,7 +556,7 @@ var GameObject = function GameObject() {
 exports["default"] = GameObject;
 module.exports = exports["default"];
 
-},{"./Game.js":5,"./Transform.js":16,"./Vector2.js":17}],7:[function(require,module,exports){
+},{"./Game.js":5,"./Transform.js":17,"./Vector2.js":18}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -731,6 +731,61 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _ComponentJs = require('./Component.js');
+
+var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
+
+var Particle = (function (_Component) {
+    _inherits(Particle, _Component);
+
+    function Particle(options) {
+        var _this = this;
+
+        _classCallCheck(this, Particle);
+
+        _get(Object.getPrototypeOf(Particle.prototype), "constructor", this).call(this, options);
+        this.lifeTime = 1000;
+        this.startTime = Date.now();
+
+        //this.r = 255;
+        //this.g = 255;
+        //this.b = 255;
+
+        this.Update = function () {
+            if (!_this.spriteRender && _this.gameObject) {
+                _this.spriteRenderer = _this.gameObject.GetComponent("SpriteRenderer");
+            }
+            if (Date.now() >= _this.startTime + _this.lifeTime) {
+                _this.gameObject.Destroy();
+            } else {
+                if (_this.spriteRenderer) {
+                    _this.spriteRenderer.alpha = 1 - (Date.now() - _this.startTime) / _this.lifeTime;
+                }
+            }
+        };
+    }
+
+    return Particle;
+})(_ComponentJs2["default"]);
+
+exports["default"] = Particle;
+module.exports = exports["default"];
+
+},{"./Component.js":3}],10:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var _ComponentJs = require("./Component.js");
 
 var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
@@ -743,9 +798,29 @@ var _GameJs = require("./Game.js");
 
 var _GameJs2 = _interopRequireDefault(_GameJs);
 
+var _GameObjectJs = require("./GameObject.js");
+
+var _GameObjectJs2 = _interopRequireDefault(_GameObjectJs);
+
 var _RectJs = require("./Rect.js");
 
 var _RectJs2 = _interopRequireDefault(_RectJs);
+
+var _SpriteRendererJs = require("./SpriteRenderer.js");
+
+var _SpriteRendererJs2 = _interopRequireDefault(_SpriteRendererJs);
+
+var _ParticleJs = require("./Particle.js");
+
+var _ParticleJs2 = _interopRequireDefault(_ParticleJs);
+
+var _TransformJs = require("./Transform.js");
+
+var _TransformJs2 = _interopRequireDefault(_TransformJs);
+
+var _ScrollingTerrainJs = require("./ScrollingTerrain.js");
+
+var _ScrollingTerrainJs2 = _interopRequireDefault(_ScrollingTerrainJs);
 
 /*
      (0,0) ----> (+, 0)
@@ -771,6 +846,7 @@ var PhysicsBody = (function (_Component) {
 
         this.game = _GameJs2["default"].instance;
         this.grounded = false;
+        this.lastGrounded = false;
 
         this.Update = function () {
             if (!_this.isKinematic) {
@@ -804,18 +880,21 @@ var PhysicsBody = (function (_Component) {
             // check if new position has Collision?
             if (!_this.collider !== null) {
                 _this.game.objs.forEach(function (object) {
-                    if (object !== _this.gameObject) {
-                        var t2 = object.transform,
-                            objRect = new _RectJs2["default"]();
-                        objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
-                        if (_this.AABB(xRect, objRect)) {
-                            xCol = true;
-                        }
-                        if (_this.AABB(yRect, objRect)) {
-                            yCol = true;
-                            yFloorCeil = t2.position.y - _this.gameObject.transform.size.y;
-                            if (object.name === "CollisionDeath" && _this.gameObject.name === "Player") {
-                                _this.gameObject.GetComponent("Player").Die();
+                    var targetCollider = object.GetComponent("Collider");
+                    if (targetCollider !== null) {
+                        if (object !== _this.gameObject) {
+                            var t2 = object.transform,
+                                objRect = new _RectJs2["default"]();
+                            objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
+                            if (_this.AABB(xRect, objRect)) {
+                                xCol = true;
+                            }
+                            if (_this.AABB(yRect, objRect)) {
+                                yCol = true;
+                                yFloorCeil = t2.position.y - _this.gameObject.transform.size.y;
+                                if (object.name === "CollisionDeath" && _this.gameObject.name === "Player") {
+                                    _this.gameObject.GetComponent("Player").Die();
+                                }
                             }
                         }
                     }
@@ -829,10 +908,31 @@ var PhysicsBody = (function (_Component) {
 
             if (!yCol) {
                 _this.gameObject.transform.position.y += _this.velocity.y;
+                _this.lastGrounded = _this.grounded;
                 _this.grounded = false;
             } else {
                 // if would collide with floor, set the position to the floor
                 _this.gameObject.transform.position.y = yFloorCeil;
+
+                if (_this.gameObject.name === "Player" && _this.lastGrounded !== _this.grounded) {
+                    // spawn a particle
+                    var jumpParticle = new _GameObjectJs2["default"]();
+                    jumpParticle.name = "JumpParticle";
+                    jumpParticle.transform = new _TransformJs2["default"]({
+                        position: new _Vector2Js2["default"](_this.gameObject.transform.position.x, _this.gameObject.transform.position.y),
+                        size: new _Vector2Js2["default"](_this.gameObject.transform.size.x, _this.gameObject.transform.size.y)
+                    });
+                    jumpParticle.AddComponent(new _SpriteRendererJs2["default"]({
+                        animated: true,
+                        animations: [{ name: "puff", frames: [4, 5, 6] }]
+                    }));
+                    jumpParticle.AddComponent(new _ParticleJs2["default"]());
+                    jumpParticle.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _GameJs2["default"].instance.speed }));
+                    jumpParticle.GetComponent("ScrollingTerrain").ticksPerFrame = 6;
+                    _GameJs2["default"].instance.objs.push(jumpParticle);
+                }
+
+                _this.lastGrounded = _this.grounded;
                 _this.grounded = true;
             }
         };
@@ -852,7 +952,7 @@ var PhysicsBody = (function (_Component) {
 exports["default"] = PhysicsBody;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5,"./Rect.js":11,"./Vector2.js":17}],10:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./GameObject.js":6,"./Particle.js":9,"./Rect.js":12,"./ScrollingTerrain.js":14,"./SpriteRenderer.js":15,"./Transform.js":17,"./Vector2.js":18}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -899,7 +999,7 @@ var Player = (function (_Component) {
 exports["default"] = Player;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5}],11:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -940,7 +1040,7 @@ var Rect = function Rect(options) {
 exports['default'] = Rect;
 module.exports = exports['default'];
 
-},{"./Vector2.js":17}],12:[function(require,module,exports){
+},{"./Vector2.js":18}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -983,7 +1083,7 @@ var RectRenderer = (function (_Component) {
 exports['default'] = RectRenderer;
 module.exports = exports['default'];
 
-},{"./Component.js":3}],13:[function(require,module,exports){
+},{"./Component.js":3}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1066,7 +1166,7 @@ var ScrollingTerrain = (function (_Component) {
 exports["default"] = ScrollingTerrain;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5,"./Vector2.js":17}],14:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Vector2.js":18}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1119,7 +1219,8 @@ var SpriteRenderer = (function (_Component) {
         this.currentAnimation = 0;
 
         this.sprite = new Image();
-        this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAgCAMAAACioYPHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3QkU2MjJGMDQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3QkU2MjJFRjQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6cMsTrAAAAElBMVEX4+Pj/5KwA7NwAeP8AAAD///9eGScjAAAABnRSTlP//////wCzv6S/AAACF0lEQVR42uyXyZLDIAxEATX//8tjJJkllsA4Ofgw1Eylyk7bT60FEvLLV/gH3FjIONYbAZlK8CqifrwCEETIFU8Q5do7AA+WQjMA6rX3AGJcB+2LADmdjBj5r/zToxRbXfYTvSQ0xBhCYMgzwVuAH132EM/WH0QJoVgXggLiOmYWBo1dtm/wVI9UAWNEqnwd4NKgBeCXeiTEwCmOVGivg3plEFaA3+qTNEgxsPFtAtYuewg40xdC+U7P1wCxLrGuy/YNWumlDIXPBWxjyLSo6zLsG7TQC6EsmIeFPsASi/uCjyK5a9BKfwOwBXh8hy6PqF32mQXDIPP9Cz0mgLz7DQG2Sdm/gfMYcXnKxaBkTpKZvlwkXRdA2a37AEE2YdTbFmCvt9RTfdlKKqEN2AeIbFvIy/G36QWQkDf05ZISGikWB1MN0AEEcXLg2ItmEOz4Jnq5pnVo1KDwa4BJz7fWqYjDh/l2PdQlPwG+vjHD7mIhlOrV462zGRCc9En5lOiSHI839GilB7LHDJ93MrRMAbPIeTsi+94JSHwU8R7g6DXBrR/snaQ2u1Nl8gJ7hLS9jjG9B3j69luOPMA2y0u/kEvoDbl+lp0DA5t6w8ARENIp4qKXZJddZxnmD5jo7wBKg7CLrk2+u+cNLUNs6peAdXxNf3Y4Q264sTj5PwSEsdFsGHBP/k2KcetH2/rIn5/ph2nS1p8AAwCbD1ijbePFdwAAAABJRU5ErkJggg==';
+        //this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAgCAMAAACioYPHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3QkU2MjJGMDQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3QkU2MjJFRjQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6cMsTrAAAAElBMVEX4+Pj/5KwA7NwAeP8AAAD///9eGScjAAAABnRSTlP//////wCzv6S/AAACF0lEQVR42uyXyZLDIAxEATX//8tjJJkllsA4Ofgw1Eylyk7bT60FEvLLV/gH3FjIONYbAZlK8CqifrwCEETIFU8Q5do7AA+WQjMA6rX3AGJcB+2LADmdjBj5r/zToxRbXfYTvSQ0xBhCYMgzwVuAH132EM/WH0QJoVgXggLiOmYWBo1dtm/wVI9UAWNEqnwd4NKgBeCXeiTEwCmOVGivg3plEFaA3+qTNEgxsPFtAtYuewg40xdC+U7P1wCxLrGuy/YNWumlDIXPBWxjyLSo6zLsG7TQC6EsmIeFPsASi/uCjyK5a9BKfwOwBXh8hy6PqF32mQXDIPP9Cz0mgLz7DQG2Sdm/gfMYcXnKxaBkTpKZvlwkXRdA2a37AEE2YdTbFmCvt9RTfdlKKqEN2AeIbFvIy/G36QWQkDf05ZISGikWB1MN0AEEcXLg2ItmEOz4Jnq5pnVo1KDwa4BJz7fWqYjDh/l2PdQlPwG+vjHD7mIhlOrV462zGRCc9En5lOiSHI839GilB7LHDJ93MrRMAbPIeTsi+94JSHwU8R7g6DXBrR/snaQ2u1Nl8gJ7hLS9jjG9B3j69luOPMA2y0u/kEvoDbl+lp0DA5t6w8ARENIp4qKXZJddZxnmD5jo7wBKg7CLrk2+u+cNLUNs6peAdXxNf3Y4Q264sTj5PwSEsdFsGHBP/k2KcetH2/rIn5/ph2nS1p8AAwCbD1ijbePFdwAAAABJRU5ErkJggg==';
+        this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAAgCAMAAADKd1bWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1QTlDNDg4ODQyREYxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1QTlDNDg4NzQyREYxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkE4MEI1QTRGQzY5RDQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4aaEb1AAAAFVBMVEX/5Kz4+PgA7NwAeP////8AAAD////k94KTAAAAB3RSTlP///////8AGksDRgAAApFJREFUeNrsmAmOwyAMRdk+9z/yBEzYDSFdRJVB7WgaQhQ/fy8g7MOH+AfwxQGLYzwRgLeazI8INiHxFQDQGjaaTwjo2jMAHLY6awsA4dpzAKAcB40HAfBy9wiE/7iv/skQuJ3FSfBSCCmlh7BLACwBqLL4KgEF6VwvZQCwSTkU1x1cZvFFgUBFAEJAbWN/BmDq4AmAyXooCOlDwAFQ27RD4rKDMQMwW68oAe5l/yKAmMVvRYgCPWMn+xMAzA3Isvi6QCgNkP3bAkhluuviLItjWSBEgMZO+yHRdbDzFQuACeKxQH4CQHLw8Y5tnSqyeGtEIZB+jOwLwHfnhYN7nYq3DGR/a0WxvlWQu6jD2A4A7VaKMq37BESY7gHI1zerXSsYCbwbgDnG6wByB8P2JeAHo4+0ngCUd7glgcD7Q8A4Bq8rQEUHMwCOvOC1z8gDSSDtZpfWhDyAt9sf/txQhcj9ExyswvlNb1fr3d/bysZNf5dfYoaPADAtgJbJqAoQAcpu4fiGafY0s5UFhbejp+j4p5kkAPojAEwHwCUCIt+vWoQ0Be64Aoo7yjgBaL/Vqx4QAiDlm/dJn7PTXIyBvBOMxQrsgQVUv0nKemGPoX5AOgterwKsHSWAeFsw3JglBWS9msuHbLVCt8hXtf4seIxQFgWQAJh65HKPP41N/y0CAGVCUgEXBHwlx5lJBw+4BcD0s3oFwJpqYiUJFrkaXgWsm3l1nBMhDXD3gG9nKtdmBOgbZk8kVcarli8DiOV7eOwH7kQ7mxgcK7EA4oubpoKVhnkAVe031Xp7uTUSTR6fKBSj6L62HDMBNC8fLmbztVCKebPQG4vOkcbYgumRmJ2tH7X0zMubfL7v3GXTafwJMACroLIQuZ9hvQAAAABJRU5ErkJggg==';
         this.frameSize = new _Vector2Js2["default"](32, 32);
         this.totalFrames = 4; // 5 with 0 based index
         this.frameIndex = 0;
@@ -1131,6 +1232,8 @@ var SpriteRenderer = (function (_Component) {
         this.patternCanvas.height = 8;
         this.patternContext = this.patternCanvas.getContext('2d');
         this.patternContext.drawImage(this.sprite, this.frameSize.x * .5, this.frameSize.y * .5, 8, 8, 0, 0, 8, 8);
+
+        this.alpha = 1;
 
         this.Update = function () {
             if (_this.animated) {
@@ -1157,6 +1260,7 @@ var SpriteRenderer = (function (_Component) {
         };
 
         this.Draw = function (ctx) {
+            ctx.globalAlpha = _this.alpha;
             var t = _this.gameObject.transform;
             if (_this.animated) {
                 ctx.drawImage(_this.sprite, _this.animations[_this.currentAnimation].frames[_this.frameIndex] * _this.frameSize.x, 0, _this.frameSize.x, _this.frameSize.y, t.position.x, t.position.y, t.size.x, t.size.y);
@@ -1170,6 +1274,7 @@ var SpriteRenderer = (function (_Component) {
                 //ctx.restore();
                 ctx.translate(-t.position.x, -t.position.y);
             }
+            ctx.globalAlpha = 1;
         };
     }
 
@@ -1179,7 +1284,7 @@ var SpriteRenderer = (function (_Component) {
 exports["default"] = SpriteRenderer;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5,"./Vector2.js":17}],15:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Vector2.js":18}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1228,7 +1333,7 @@ var TextRenderer = (function (_Component) {
 exports['default'] = TextRenderer;
 module.exports = exports['default'];
 
-},{"./Component.js":3}],16:[function(require,module,exports){
+},{"./Component.js":3}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1265,7 +1370,7 @@ var Transform = (function (_Component) {
 exports["default"] = Transform;
 module.exports = exports["default"];
 
-},{"./Component.js":3}],17:[function(require,module,exports){
+},{"./Component.js":3}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
