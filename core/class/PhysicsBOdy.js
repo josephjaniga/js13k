@@ -1,7 +1,12 @@
 import Component from "./Component.js";
 import Vector2 from "./Vector2.js";
 import Game from "./Game.js";
+import GameObject from "./GameObject.js";
 import Rect from "./Rect.js";
+import SpriteRenderer from "./SpriteRenderer.js";
+import Particle from "./Particle.js";
+import Transform from "./Transform.js";
+import ScrollingTerrain from "./ScrollingTerrain.js";
 
 /*
      (0,0) ----> (+, 0)
@@ -21,6 +26,7 @@ export default class PhysicsBody extends Component {
 
         this.game = Game.instance;
         this.grounded = false;
+        this.lastGrounded = false;
 
         this.Update = ()=>{
             if ( !this.isKinematic ){
@@ -64,18 +70,21 @@ export default class PhysicsBody extends Component {
             // check if new position has Collision?
             if ( !this.collider !== null ){
                 this.game.objs.forEach((object)=>{
-                    if ( object !== this.gameObject ) {
-                        var t2 = object.transform,
-                            objRect = new Rect();
-                        objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
-                        if (this.AABB(xRect, objRect)) {
-                            xCol = true;
-                        }
-                        if (this.AABB(yRect, objRect)) {
-                            yCol = true;
-                            yFloorCeil = t2.position.y - this.gameObject.transform.size.y;
-                            if ( object.name === "CollisionDeath" && this.gameObject.name === "Player" ){
-                                this.gameObject.GetComponent("Player").Die();
+                    var targetCollider = object.GetComponent("Collider");
+                    if ( targetCollider !== null ){
+                        if ( object !== this.gameObject ) {
+                            var t2 = object.transform,
+                                objRect = new Rect();
+                            objRect.init(t2.position.x, t2.position.y, t2.size.x, t2.size.y);
+                            if (this.AABB(xRect, objRect)) {
+                                xCol = true;
+                            }
+                            if (this.AABB(yRect, objRect)) {
+                                yCol = true;
+                                yFloorCeil = t2.position.y - this.gameObject.transform.size.y;
+                                if ( object.name === "CollisionDeath" && this.gameObject.name === "Player" ){
+                                    this.gameObject.GetComponent("Player").Die();
+                                }
                             }
                         }
                     }
@@ -89,10 +98,31 @@ export default class PhysicsBody extends Component {
 
             if ( !yCol ) {
                 this.gameObject.transform.position.y += this.velocity.y;
+                this.lastGrounded = this.grounded;
                 this.grounded = false;
             } else {
                 // if would collide with floor, set the position to the floor
                 this.gameObject.transform.position.y = yFloorCeil;
+
+                if ( this.gameObject.name === "Player" && this.lastGrounded !== this.grounded ){
+                    // spawn a particle
+                    var jumpParticle = new GameObject();
+                    jumpParticle.name = "JumpParticle";
+                    jumpParticle.transform = new Transform({
+                        position: new Vector2(this.gameObject.transform.position.x,this.gameObject.transform.position.y),
+                        size: new Vector2(this.gameObject.transform.size.x, this.gameObject.transform.size.y)
+                    });
+                    jumpParticle.AddComponent(new SpriteRenderer({
+                        animated: true,
+                        animations: [{name:"puff" , frames:[4, 5, 6]}]
+                    }));
+                    jumpParticle.AddComponent(new Particle());
+                    jumpParticle.AddComponent(new ScrollingTerrain({speed:Game.instance.speed}));
+                    jumpParticle.GetComponent("ScrollingTerrain").ticksPerFrame = 6;
+                    Game.instance.objs.push(jumpParticle);
+                }
+
+                this.lastGrounded = this.grounded;
                 this.grounded = true;
             }
 

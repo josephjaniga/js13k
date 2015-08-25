@@ -95,7 +95,7 @@ export default class Game {
             this.SpawnStartMenu();
         };
         this.StartGame = ()=>{
-            this.SpawnPlayer(new Vector2(280, 130), new Vector2(15, 15));
+            this.SpawnPlayer(new Vector2(250, 130), new Vector2(15, 15));
             this.SpawnPlatform(new Vector2(160,150), new Vector2(320,200));
             this.SpawnCatch();
         };
@@ -151,8 +151,8 @@ export default class Game {
             player.AddComponent(new SpriteRenderer({
                 animated: true,
                 animations: [
-                    {name: "Walk", frames: [0, 1, 2, 3]},
-                    {name: "Jump", frames: [4]}
+                    {name: "Walk", frames: [0, 1, 2, 1]},
+                    {name: "Jump", frames: [3]}
                 ]
             }));
             player.color = this.color.transparent;
