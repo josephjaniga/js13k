@@ -15,6 +15,10 @@ export default class Jump extends Component{
         this.lastJumpTime = -9999;
         this.jumpCD = 300;
 
+        this.soundSource = "data:audio/mp3;base64,/+MYxAALeAMRuUEQArT4o7LLw/ggCb9YY3orfAAYy5//E6z8H+oMS4fUCAIf6pR3/E+T///5d8QO/D4XHPD+DfHROEnTxLGD/+MYxA0O6TcMAYcwAO48Nn/uxT26BMMnf7nAwN/7fdq//69Ntlk0+/PmlwuHzG0qR29n4jBwlB/+vsy9DNxS43f///////HU/+MYxAwQI0L4AY04AIEgGhF//46WyHzqjVRJF43P/mzW5s5H0Eb/+5hjfzRsfWTHCBM//qavr//8353+YaXM/+IlEgHIC4Su/+MYxAYOuxKoCZJoALIaaJ/dD/zG//qSMWV//76X//v6LI1f//7moOoYwHsEiHcUtv///90dKqp9X////0l9aki8TEFNRTMu/+MYxAYAAANIAcAAADk5LjWqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+
+        this.jumpSound = new Audio(this.soundSource);
+
         this.Update = ()=>{
 
             //gulpconsole.log("jump1: " + this.jumpOne + " doublejump: " + this.doubleJump);
@@ -59,6 +63,7 @@ export default class Jump extends Component{
         this.Jump = (force)=>{
             if ( this.lastJumpTime + this.jumpCD <= Date.now() ){
                 this.lastJumpTime = Date.now();
+                this.jumpSound.play();
                 if ( this.gameObject ){
                     this.pb = this.gameObject.GetComponent("PhysicsBody");
                 }
