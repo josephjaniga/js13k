@@ -66,7 +66,7 @@ _game.init();
 _input.Attach();
 _game.Loop();
 
-},{"./class/Collider.js":2,"./class/Component.js":3,"./class/Game.js":5,"./class/GameObject.js":6,"./class/Input.js":7,"./class/Jump.js":8,"./class/PhysicsBody.js":10,"./class/Rect.js":12,"./class/RectRenderer.js":13,"./class/ScrollingTerrain.js":14,"./class/SpriteRenderer.js":15,"./class/Transform.js":17,"./class/Vector2.js":18}],2:[function(require,module,exports){
+},{"./class/Collider.js":2,"./class/Component.js":3,"./class/Game.js":5,"./class/GameObject.js":6,"./class/Input.js":7,"./class/Jump.js":8,"./class/PhysicsBody.js":11,"./class/Rect.js":13,"./class/RectRenderer.js":14,"./class/ScrollingTerrain.js":15,"./class/SpriteRenderer.js":16,"./class/Transform.js":18,"./class/Vector2.js":19}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -203,6 +203,10 @@ var _JumpJs = require("./Jump.js");
 
 var _JumpJs2 = _interopRequireDefault(_JumpJs);
 
+var _ParallaxJs = require("./Parallax.js");
+
+var _ParallaxJs2 = _interopRequireDefault(_ParallaxJs);
+
 var _PhysicsBodyJs = require("./PhysicsBody.js");
 
 var _PhysicsBodyJs2 = _interopRequireDefault(_PhysicsBodyJs);
@@ -283,6 +287,11 @@ var Game = (function () {
             }
         };
         this.Draw = function () {
+
+            _this.CTX.webkitImageSmoothingEnabled = false;
+            _this.CTX.mozImageSmoothingEnabled = false;
+            _this.CTX.imageSmoothingEnabled = false;
+
             _this.CTX.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
             _this.objs.forEach(function (el) {
                 el.Draw(_this.CTX);
@@ -321,6 +330,7 @@ var Game = (function () {
             _this.ResizeCanvas(_this.resolution.x * _this.scale, _this.resolution.y * _this.scale);
             _this.CTX.scale(_this.scale, _this.scale);
             // setup
+            _this.SpawnParallax();
             _this.SpawnStartMenu();
         };
         this.StartGame = function () {
@@ -444,6 +454,79 @@ var Game = (function () {
             subtitle.AddComponent(new _DestroyOnSpaceJs2["default"]());
             _this.objs.push(subtitle);
         };
+        this.SpawnParallax = function () {
+
+            var stars = new _GameObjectJs2["default"]();
+            stars.transform = new _TransformJs2["default"]({
+                position: _Vector2Js2["default"].zero(),
+                size: _this.resolution
+            });
+            stars.AddComponent(new _ParallaxJs2["default"]({
+                sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF8AAAAiAgMAAABEnu15AAAADFBMVEUAAABSdCSTuWPA3YsKQP1cAAAAAXRSTlMAQObYZgAAAEtJREFUKM9jGCDAiMRWgFBMqCpEMPQ0QJXjkhAg2zUOFCt2oDxIeHBJHMAl8YBEGxoocJ0CphCRoc5CesJA2Ep5LFIOmB0IxwgCAABPXAXsrhitAAAAAABJRU5ErkJggg==",
+                size: new _Vector2Js2["default"](95, 34),
+                tickFrames: 120,
+                repeat: true
+            }));
+            stars.name = "Stars";
+            _this.objs.push(stars);
+
+            var moon = new _GameObjectJs2["default"]();
+            moon.transform = new _TransformJs2["default"]({
+                position: new _Vector2Js2["default"](20, 15),
+                size: new _Vector2Js2["default"](42, 40)
+            });
+            moon.AddComponent(new _ParallaxJs2["default"]({
+                sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAUBAMAAACQZWsAAAAAD1BMVEUAAACTuWPA3YtSdCQtNhlaMa0FAAAAAXRSTlMAQObYZgAAAH9JREFUCNddztENAkEIBFA9KxjmGmBuC5DFAkzW/msSTv1xEsILfMDlPw78CBfzOw0AfJ4umXw0r4y0Kax2BozTWQYzmKZoo72c9zYC82HlDSCMx4yysA/HK9hWHOYj+7I8KRk/9pQOZ1uaVdHe1HGcz82mr1ItTI690LlFovsbJFMTBF1I6sMAAAAASUVORK5CYII=",
+                size: new _Vector2Js2["default"](21, 20),
+                tickFrames: 45,
+                repeat: false,
+                scale: 2
+            }));
+            moon.name = "Moon";
+            _this.objs.push(moon);
+
+            var rectBG = new _GameObjectJs2["default"]();
+            rectBG.transform = new _TransformJs2["default"]({
+                position: new _Vector2Js2["default"](0, 94),
+                size: _this.resolution
+            });
+            rectBG.color = "#2e3719";
+            rectBG.AddComponent(new _RectRendererJs2["default"]());
+            _this.objs.push(rectBG);
+
+            var backMountain = new _GameObjectJs2["default"]();
+            backMountain.transform = new _TransformJs2["default"]({
+                position: new _Vector2Js2["default"](0, 44),
+                size: new _Vector2Js2["default"](_this.resolution.x, 81)
+            });
+            backMountain.AddComponent(new _ParallaxJs2["default"]({
+                sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAbAgMAAACfC0DrAAAACVBMVEUAAAAuNxlScyNJmFCcAAAAAXRSTlMAQObYZgAAAQBJREFUKM99zkFOxDAMBVAGCRbsB4krcIo5wiz4lpy9KyWnQNzBEcmKBY5wTsmUtrTqIL53T9a3b/7Nw9cf+Nb7x/Umd+9X+hR7ra97FYvUPnd48AGQuFu+t3jRQU9bfM4elZT6+1Zrs2qZ4X7eaCKHd2MtuuKtNleKLOhlc0vJlALE4esbjwo3qt4C4vrz0SAKZGYAy72DKUsWEjIFXpaCJIWbhEZRAJmVI9GQdBwAw2kqkKLSIblaFHCYKu6QNHQJqSMAyJg1FE5BagEphKYvjojIyXxsjRgzNgOCqKExY87YjEu4ojBs4UmDGSeHLHr+USIVUhCWnC46XxH85vwNOQCNbZlGlfEAAAAASUVORK5CYII=",
+                size: new _Vector2Js2["default"](84, 27),
+                tickFrames: 22,
+                scale: 3,
+                repeat: true
+            }));
+
+            backMountain.name = "BackMountain";
+            _this.objs.push(backMountain);
+
+            var frontMountain = new _GameObjectJs2["default"]();
+            frontMountain.transform = new _TransformJs2["default"]({
+                position: new _Vector2Js2["default"](0, 100),
+                size: new _Vector2Js2["default"](_this.resolution.x, 57)
+            });
+            frontMountain.AddComponent(new _ParallaxJs2["default"]({
+                sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAATAgMAAAB6s2L8AAAADFBMVEUAAAAuNxmTuWNSdCS1ShlGAAAAAXRSTlMAQObYZgAAALhJREFUGNNjIAcwBmARXLZsKYbYwmUrZ6Gr1YoMmxY1AUWIY9m6WbOWRi1bgSzIuWzlq1krV61MQxZctTvtd/2qV8uyHBCOWVn+7+Xcv+GvS5H0S6Z+rUy/ez00/easpQIwhavSr4ZNzQ1dGhqfOS0EKshaGXt31dTQ0LCroWFrp0EF7e9WXg0FgqzQ0PitYQsggn+BQktDoSBsCViMPxQJTA2dCXZVeCgqCABZgyaWGgp0TygGCAAAjbBYWvu9u1wAAAAASUVORK5CYII=",
+                size: new _Vector2Js2["default"](80, 19),
+                tickFrames: 5,
+                scale: 3,
+                translation: 55,
+                repeat: true
+            }));
+
+            frontMountain.name = "FrontMountain";
+            _this.objs.push(frontMountain);
+        };
     }
 
     /**
@@ -467,7 +550,7 @@ var Game = (function () {
 exports["default"] = Game;
 module.exports = exports["default"];
 
-},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./PhysicsBody.js":10,"./Player.js":11,"./Rect.js":12,"./RectRenderer.js":13,"./ScrollingTerrain.js":14,"./SpriteRenderer.js":15,"./TextRenderer.js":16,"./Transform.js":17,"./Vector2.js":18}],6:[function(require,module,exports){
+},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./Parallax.js":9,"./PhysicsBody.js":11,"./Player.js":12,"./Rect.js":13,"./RectRenderer.js":14,"./ScrollingTerrain.js":15,"./SpriteRenderer.js":16,"./TextRenderer.js":17,"./Transform.js":18,"./Vector2.js":19}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -556,7 +639,7 @@ var GameObject = function GameObject() {
 exports["default"] = GameObject;
 module.exports = exports["default"];
 
-},{"./Game.js":5,"./Transform.js":17,"./Vector2.js":18}],7:[function(require,module,exports){
+},{"./Game.js":5,"./Transform.js":18,"./Vector2.js":19}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -657,6 +740,10 @@ var Jump = (function (_Component) {
         this.lastJumpTime = -9999;
         this.jumpCD = 300;
 
+        this.soundSource = "data:audio/mp3;base64,/+MYxAALeAMRuUEQArT4o7LLw/ggCb9YY3orfAAYy5//E6z8H+oMS4fUCAIf6pR3/E+T///5d8QO/D4XHPD+DfHROEnTxLGD/+MYxA0O6TcMAYcwAO48Nn/uxT26BMMnf7nAwN/7fdq//69Ntlk0+/PmlwuHzG0qR29n4jBwlB/+vsy9DNxS43f///////HU/+MYxAwQI0L4AY04AIEgGhF//46WyHzqjVRJF43P/mzW5s5H0Eb/+5hjfzRsfWTHCBM//qavr//8353+YaXM/+IlEgHIC4Su/+MYxAYOuxKoCZJoALIaaJ/dD/zG//qSMWV//76X//v6LI1f//7moOoYwHsEiHcUtv///90dKqp9X////0l9aki8TEFNRTMu/+MYxAYAAANIAcAAADk5LjWqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+
+        this.jumpSound = new Audio(this.soundSource);
+
         this.Update = function () {
 
             //gulpconsole.log("jump1: " + this.jumpOne + " doublejump: " + this.doubleJump);
@@ -700,6 +787,7 @@ var Jump = (function (_Component) {
         this.Jump = function (force) {
             if (_this.lastJumpTime + _this.jumpCD <= Date.now()) {
                 _this.lastJumpTime = Date.now();
+                _this.jumpSound.play();
                 if (_this.gameObject) {
                     _this.pb = _this.gameObject.GetComponent("PhysicsBody");
                 }
@@ -717,6 +805,112 @@ exports["default"] = Jump;
 module.exports = exports["default"];
 
 },{"./Component.js":3}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _ComponentJs = require('./Component.js');
+
+var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
+
+var _GameJs = require("./Game.js");
+
+var _GameJs2 = _interopRequireDefault(_GameJs);
+
+var Parallax = (function (_Component) {
+    _inherits(Parallax, _Component);
+
+    function Parallax(options) {
+        var _this = this;
+
+        _classCallCheck(this, Parallax);
+
+        _get(Object.getPrototypeOf(Parallax.prototype), 'constructor', this).call(this, options);
+
+        this.size = options.size;
+
+        this.DrawPatternContext = function () {
+            _this.patternContext.drawImage(_this.sprite, 0, 0, _this.size.x * _this.scale, _this.size.y * _this.scale);
+        };
+
+        this.scale = options.scale || 1;
+
+        this.sprite = new Image();
+        //this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAgCAMAAACioYPHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3QkU2MjJGMDQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3QkU2MjJFRjQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6cMsTrAAAAElBMVEX4+Pj/5KwA7NwAeP8AAAD///9eGScjAAAABnRSTlP//////wCzv6S/AAACF0lEQVR42uyXyZLDIAxEATX//8tjJJkllsA4Ofgw1Eylyk7bT60FEvLLV/gH3FjIONYbAZlK8CqifrwCEETIFU8Q5do7AA+WQjMA6rX3AGJcB+2LADmdjBj5r/zToxRbXfYTvSQ0xBhCYMgzwVuAH132EM/WH0QJoVgXggLiOmYWBo1dtm/wVI9UAWNEqnwd4NKgBeCXeiTEwCmOVGivg3plEFaA3+qTNEgxsPFtAtYuewg40xdC+U7P1wCxLrGuy/YNWumlDIXPBWxjyLSo6zLsG7TQC6EsmIeFPsASi/uCjyK5a9BKfwOwBXh8hy6PqF32mQXDIPP9Cz0mgLz7DQG2Sdm/gfMYcXnKxaBkTpKZvlwkXRdA2a37AEE2YdTbFmCvt9RTfdlKKqEN2AeIbFvIy/G36QWQkDf05ZISGikWB1MN0AEEcXLg2ItmEOz4Jnq5pnVo1KDwa4BJz7fWqYjDh/l2PdQlPwG+vjHD7mIhlOrV462zGRCc9En5lOiSHI839GilB7LHDJ93MrRMAbPIeTsi+94JSHwU8R7g6DXBrR/snaQ2u1Nl8gJ7hLS9jjG9B3j69luOPMA2y0u/kEvoDbl+lp0DA5t6w8ARENIp4qKXZJddZxnmD5jo7wBKg7CLrk2+u+cNLUNs6peAdXxNf3Y4Q264sTj5PwSEsdFsGHBP/k2KcetH2/rIn5/ph2nS1p8AAwCbD1ijbePFdwAAAABJRU5ErkJggg==';
+        this.sprite.src = options.sprite;
+        this.patternCanvas = document.createElement('canvas');
+        this.patternCanvas.width = options.size.x * this.scale;
+        this.patternCanvas.height = options.size.y * this.scale;
+        this.patternContext = this.patternCanvas.getContext('2d');
+
+        this.patternContext.webkitImageSmoothingEnabled = false;
+        this.patternContext.mozImageSmoothingEnabled = false;
+        this.patternContext.imageSmoothingEnabled = false;
+
+        this.repeat = options.repeat;
+
+        this.DrawPatternContext();
+
+        this.tickFrames = options.tickFrames || 60;
+        this.tickPixels = 1;
+        this.currentFrame = 0;
+        this.translation = options.translation || 0;
+
+        this.Update = function () {
+
+            _this.currentFrame++;
+
+            //if ( this.currentFrame === this.tickFrames ){
+            //    this.translation += this.tickPixels;
+            //    this.currentFrame = 0;
+            //}
+
+            _this.translation += _this.tickPixels / _this.tickFrames;
+
+            _this.DrawPatternContext();
+        };
+
+        this.Draw = function (ctx) {
+
+            var t = _this.gameObject.transform;
+            var finalPattern = ctx.createPattern(_this.patternCanvas, "repeat");
+            ctx.fillStyle = finalPattern;
+
+            if (_this.repeat) {
+                ctx.save();
+                ctx.translate(t.position.x + _this.translation, t.position.y);
+                ctx.fillRect(t.position.x - _this.translation, 0, t.size.x + _this.translation, t.size.y);
+                ctx.restore();
+            } else {
+                ctx.save();
+                var temp = _this.translation % _GameJs2['default'].instance.resolution.x,
+                    tempTwo = Math.sin(temp);
+                ctx.translate(temp, tempTwo);
+                ctx.fillRect(t.position.x + 22, t.position.y - 13, t.size.x, t.size.y);
+                ctx.restore();
+            }
+
+            //ctx.translate(-t.position.x-this.translation, -t.position.y);
+        };
+    }
+
+    return Parallax;
+})(_ComponentJs2['default']);
+
+exports['default'] = Parallax;
+module.exports = exports['default'];
+
+},{"./Component.js":3,"./Game.js":5}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -771,7 +965,7 @@ var Particle = (function (_Component) {
 exports["default"] = Particle;
 module.exports = exports["default"];
 
-},{"./Component.js":3}],10:[function(require,module,exports){
+},{"./Component.js":3}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -924,11 +1118,12 @@ var PhysicsBody = (function (_Component) {
                     });
                     jumpParticle.AddComponent(new _SpriteRendererJs2["default"]({
                         animated: true,
-                        animations: [{ name: "puff", frames: [4, 5, 6] }]
+                        animations: [{ name: "puff", frames: [4, 5, 6] }],
+                        playOnce: true
                     }));
                     jumpParticle.AddComponent(new _ParticleJs2["default"]());
                     jumpParticle.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _GameJs2["default"].instance.speed }));
-                    jumpParticle.GetComponent("ScrollingTerrain").ticksPerFrame = 6;
+                    jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 10;
                     _GameJs2["default"].instance.objs.push(jumpParticle);
                 }
 
@@ -952,7 +1147,7 @@ var PhysicsBody = (function (_Component) {
 exports["default"] = PhysicsBody;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5,"./GameObject.js":6,"./Particle.js":9,"./Rect.js":12,"./ScrollingTerrain.js":14,"./SpriteRenderer.js":15,"./Transform.js":17,"./Vector2.js":18}],11:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./GameObject.js":6,"./Particle.js":10,"./Rect.js":13,"./ScrollingTerrain.js":15,"./SpriteRenderer.js":16,"./Transform.js":18,"./Vector2.js":19}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -999,7 +1194,7 @@ var Player = (function (_Component) {
 exports["default"] = Player;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5}],12:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1040,7 +1235,7 @@ var Rect = function Rect(options) {
 exports['default'] = Rect;
 module.exports = exports['default'];
 
-},{"./Vector2.js":18}],13:[function(require,module,exports){
+},{"./Vector2.js":19}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1083,7 +1278,7 @@ var RectRenderer = (function (_Component) {
 exports['default'] = RectRenderer;
 module.exports = exports['default'];
 
-},{"./Component.js":3}],14:[function(require,module,exports){
+},{"./Component.js":3}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1166,7 +1361,7 @@ var ScrollingTerrain = (function (_Component) {
 exports["default"] = ScrollingTerrain;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5,"./Vector2.js":18}],15:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Vector2.js":19}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1235,6 +1430,8 @@ var SpriteRenderer = (function (_Component) {
 
         this.alpha = 1;
 
+        this.playOnce = options.playOnce;
+
         this.Update = function () {
             if (_this.animated) {
                 _this.animations.forEach(function (anim, index) {
@@ -1255,6 +1452,9 @@ var SpriteRenderer = (function (_Component) {
                     } else {
                         _this.frameIndex = 0;
                     }
+                }
+                if (_this.playOnce && _this.frameIndex === _this.totalFrames - 1 && _this.tickCount === _this.ticksPerFrame) {
+                    _this.gameObject.Destroy();
                 }
             }
         };
@@ -1284,7 +1484,7 @@ var SpriteRenderer = (function (_Component) {
 exports["default"] = SpriteRenderer;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5,"./Vector2.js":18}],16:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./Vector2.js":19}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1333,7 +1533,7 @@ var TextRenderer = (function (_Component) {
 exports['default'] = TextRenderer;
 module.exports = exports['default'];
 
-},{"./Component.js":3}],17:[function(require,module,exports){
+},{"./Component.js":3}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1370,7 +1570,7 @@ var Transform = (function (_Component) {
 exports["default"] = Transform;
 module.exports = exports["default"];
 
-},{"./Component.js":3}],18:[function(require,module,exports){
+},{"./Component.js":3}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

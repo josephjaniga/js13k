@@ -38,6 +38,8 @@ export default class SpriteRenderer extends Component{
 
         this.alpha = 1;
 
+        this.playOnce = options.playOnce;
+
         this.Update = ()=>{
             if ( this.animated ){
                 this.animations.forEach((anim, index)=>{
@@ -58,6 +60,9 @@ export default class SpriteRenderer extends Component{
                     } else {
                         this.frameIndex = 0;
                     }
+                }
+                if ( this.playOnce && this.frameIndex === this.totalFrames - 1 && this.tickCount === this.ticksPerFrame  ){
+                    this.gameObject.Destroy();
                 }
             }
         };

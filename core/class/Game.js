@@ -4,6 +4,7 @@ import DestroyOnSpace from "./DestroyOnSpace.js";
 import GameObject from "./GameObject.js";
 import Input from "./Input.js";
 import Jump from "./Jump.js";
+import Parallax from "./Parallax.js";
 import PhysicsBody from "./PhysicsBody.js";
 import Player from "./Player.js";
 import Rect from "./Rect.js";
@@ -54,6 +55,11 @@ export default class Game {
             }
         };
         this.Draw = ()=> {
+
+            this.CTX.webkitImageSmoothingEnabled = false;
+            this.CTX.mozImageSmoothingEnabled = false;
+            this.CTX.imageSmoothingEnabled = false;
+
             this.CTX.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.objs.forEach((el)=> {
                 el.Draw(this.CTX);
@@ -92,6 +98,7 @@ export default class Game {
             this.ResizeCanvas(this.resolution.x * this.scale, this.resolution.y * this.scale);
             this.CTX.scale(this.scale, this.scale);
             // setup
+            this.SpawnParallax();
             this.SpawnStartMenu();
         };
         this.StartGame = ()=>{
@@ -227,6 +234,80 @@ export default class Game {
                 ));
                 subtitle.AddComponent(new DestroyOnSpace());
                 this.objs.push(subtitle);
+        };
+        this.SpawnParallax = ()=> {
+
+            var stars = new GameObject();
+            stars.transform = new Transform({
+                position: Vector2.zero(),
+                size: this.resolution
+            });
+            stars.AddComponent(new Parallax({
+                sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF8AAAAiAgMAAABEnu15AAAADFBMVEUAAABSdCSTuWPA3YsKQP1cAAAAAXRSTlMAQObYZgAAAEtJREFUKM9jGCDAiMRWgFBMqCpEMPQ0QJXjkhAg2zUOFCt2oDxIeHBJHMAl8YBEGxoocJ0CphCRoc5CesJA2Ep5LFIOmB0IxwgCAABPXAXsrhitAAAAAABJRU5ErkJggg==",
+                size: new Vector2(95, 34),
+                tickFrames:120,
+                repeat: true
+            }));
+            stars.name = "Stars";
+            this.objs.push(stars);
+
+            var moon = new GameObject();
+            moon.transform = new Transform({
+                position: new Vector2(20, 15),
+                size:  new Vector2(42, 40),
+            });
+            moon.AddComponent(new Parallax({
+                sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAUBAMAAACQZWsAAAAAD1BMVEUAAACTuWPA3YtSdCQtNhlaMa0FAAAAAXRSTlMAQObYZgAAAH9JREFUCNddztENAkEIBFA9KxjmGmBuC5DFAkzW/msSTv1xEsILfMDlPw78CBfzOw0AfJ4umXw0r4y0Kax2BozTWQYzmKZoo72c9zYC82HlDSCMx4yysA/HK9hWHOYj+7I8KRk/9pQOZ1uaVdHe1HGcz82mr1ItTI690LlFovsbJFMTBF1I6sMAAAAASUVORK5CYII=",
+                size: new Vector2(21, 20),
+                tickFrames:45,
+                repeat: false,
+                scale: 2
+            }));
+            moon.name = "Moon";
+            this.objs.push(moon);
+
+            var rectBG = new GameObject();
+            rectBG.transform = new Transform({
+                position: new Vector2(0, 94),
+                size: this.resolution
+            });
+            rectBG.color = "#2e3719";
+            rectBG.AddComponent(new RectRenderer());
+            this.objs.push(rectBG);
+
+
+            var backMountain = new GameObject();
+                backMountain.transform = new Transform({
+                    position: new Vector2(0, 44),
+                    size: new Vector2(this.resolution.x, 81)
+                });
+                backMountain.AddComponent(new Parallax({
+                    sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAbAgMAAACfC0DrAAAACVBMVEUAAAAuNxlScyNJmFCcAAAAAXRSTlMAQObYZgAAAQBJREFUKM99zkFOxDAMBVAGCRbsB4krcIo5wiz4lpy9KyWnQNzBEcmKBY5wTsmUtrTqIL53T9a3b/7Nw9cf+Nb7x/Umd+9X+hR7ra97FYvUPnd48AGQuFu+t3jRQU9bfM4elZT6+1Zrs2qZ4X7eaCKHd2MtuuKtNleKLOhlc0vJlALE4esbjwo3qt4C4vrz0SAKZGYAy72DKUsWEjIFXpaCJIWbhEZRAJmVI9GQdBwAw2kqkKLSIblaFHCYKu6QNHQJqSMAyJg1FE5BagEphKYvjojIyXxsjRgzNgOCqKExY87YjEu4ojBs4UmDGSeHLHr+USIVUhCWnC46XxH85vwNOQCNbZlGlfEAAAAASUVORK5CYII=",
+                    size: new Vector2(84, 27),
+                    tickFrames: 22,
+                    scale: 3,
+                    repeat: true
+                }));
+
+                backMountain.name = "BackMountain";
+                this.objs.push(backMountain);
+
+            var frontMountain = new GameObject();
+                frontMountain.transform = new Transform({
+                    position: new Vector2(0, 100),
+                    size: new Vector2(this.resolution.x, 57)
+                });
+                frontMountain.AddComponent(new Parallax({
+                    sprite: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAATAgMAAAB6s2L8AAAADFBMVEUAAAAuNxmTuWNSdCS1ShlGAAAAAXRSTlMAQObYZgAAALhJREFUGNNjIAcwBmARXLZsKYbYwmUrZ6Gr1YoMmxY1AUWIY9m6WbOWRi1bgSzIuWzlq1krV61MQxZctTvtd/2qV8uyHBCOWVn+7+Xcv+GvS5H0S6Z+rUy/ez00/easpQIwhavSr4ZNzQ1dGhqfOS0EKshaGXt31dTQ0LCroWFrp0EF7e9WXg0FgqzQ0PitYQsggn+BQktDoSBsCViMPxQJTA2dCXZVeCgqCABZgyaWGgp0TygGCAAAjbBYWvu9u1wAAAAASUVORK5CYII=",
+                    size: new Vector2(80, 19),
+                    tickFrames: 5,
+                    scale: 3,
+                    translation: 55,
+                    repeat:true
+                }));
+
+                frontMountain.name = "FrontMountain";
+                this.objs.push(frontMountain);
         };
     }
     static get instance() {
