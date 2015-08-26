@@ -35,8 +35,6 @@ export default class SpriteRenderer extends Component{
         this.patternCanvas.height = this.frameSize.y*2;
         this.patternContext = this.patternCanvas.getContext('2d');
 
-        this.patternContext.webkitImageSmoothingEnabled = false;
-        this.patternContext.mozImageSmoothingEnabled = false;
         this.patternContext.imageSmoothingEnabled = false;
 
         this.patternContext.drawImage(this.sprite, this.frameSize.x*this.tiledIndex, 0, this.frameSize.x, this.frameSize.y, 0, 0, this.frameSize.x*2, this.frameSize.y*2);
@@ -95,7 +93,6 @@ export default class SpriteRenderer extends Component{
                 ctx.fillStyle = finalPattern;
                 ctx.fillRect(0, 0, t.size.x, t.size.y);
                 ctx.restore();
-                //ctx.translate(-t.position.x, -t.position.y);
             }
             ctx.globalAlpha = 1;
         };

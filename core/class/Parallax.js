@@ -23,8 +23,6 @@ export default class Parallax extends Component{
         this.patternCanvas.height = options.size.y * this.scale;
         this.patternContext = this.patternCanvas.getContext('2d');
 
-        this.patternContext.webkitImageSmoothingEnabled = false;
-        this.patternContext.mozImageSmoothingEnabled = false;
         this.patternContext.imageSmoothingEnabled = false;
 
         this.repeat = options.repeat;

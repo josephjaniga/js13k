@@ -29,7 +29,7 @@ export default class GameObject {
         this.GetComponent = (name)=>{
             let needle = null;
             this.components.forEach(function(component){
-                console.log(component.constructor.name);
+                //console.log(component.constructor.name);
                 if ( component.constructor.name === name ){
                     needle = component;
                 }

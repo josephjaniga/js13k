@@ -19,7 +19,7 @@ export default class PhysicsBody extends Component {
     constructor(options){
         super(options);
 
-        console.log("player spawned - added PB");
+        //console.log("player spawned - added PB");
         this.gravity = new Vector2(0,0.3);
         this.velocity = Vector2.zero();
         this.acceleration = Vector2.zero();
@@ -30,6 +30,8 @@ export default class PhysicsBody extends Component {
         this.grounded = false;
         this.lastGrounded = false;
 
+        this.hitSoundSource = jsfxr([3,,0.0507,,0.2369,0.7984,,-0.6757,,,,,,,,,,,1,,,0.1483,,0.5]);
+        this.hitSound = new Audio(this.hitSoundSource);
 
         this.Update = ()=>{
 
@@ -106,10 +108,18 @@ export default class PhysicsBody extends Component {
                 this.lastGrounded = this.grounded;
                 this.grounded = false;
             } else {
+
                 // if would collide with floor, set the position to the floor
                 this.gameObject.transform.position.y = yFloorCeil;
 
                 if ( this.gameObject.name === "Player" && this.lastGrounded !== this.grounded ){
+
+                    // play a landing sound
+                    this.hitSound.pause();
+                    this.hitSound.currentTime = 0;
+                    this.hitSound.playbackRate = Math.random() * (2.5 - 0.75) + 0.75;
+                    this.hitSound.play();
+
                     // spawn a particle
                     var jumpParticle = new GameObject();
                     jumpParticle.name = "JumpParticle";
@@ -134,7 +144,7 @@ export default class PhysicsBody extends Component {
 
         };
         this.AABB = (rect1, rect2)=>{
-            console.log("collisions??? " + this.gameObject.name);
+            //console.log("collisions??? " + this.gameObject.name);
             var collision = false;
             if (rect1.position.x < rect2.position.x + rect2.size.x &&
                 rect1.position.x + rect1.size.x > rect2.position.x &&

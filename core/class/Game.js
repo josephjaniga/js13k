@@ -57,8 +57,6 @@ export default class Game {
         };
         this.Draw = ()=> {
 
-            this.CTX.webkitImageSmoothingEnabled = false;
-            this.CTX.mozImageSmoothingEnabled = false;
             this.CTX.imageSmoothingEnabled = false;
 
             this.CTX.clearRect(0, 0, this.canvas.width, this.canvas.height);

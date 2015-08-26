@@ -19,7 +19,7 @@ var babelify    = require('babelify'),
 
     // the filepath setup
     _DATESTAMP_     = Date.now(),
-    CORE_SOURCE     = ['core/**/*.js', '!core/core.es5.min.js'],
+    CORE_SOURCE     = ['core/**/*.js', '!core/core.es5.min.js', 'lib/**/*.js'],
     CORE_DEST       = 'build/core/',
     DEV_CORE_DEST   = 'core/',
     INDEX_SOURCE    = 'index.html',
