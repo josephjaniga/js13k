@@ -1,5 +1,9 @@
 'use strict';
 
+// try this - SOURCE MAPS
+// http://stackoverflow.com/questions/28087674/gulp-browserify-6to5-source-maps
+
+
 var babelify    = require('babelify'),
     browserify  = require('browserify'),
     del         = require('del'),
