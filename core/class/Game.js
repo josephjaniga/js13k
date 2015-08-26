@@ -4,6 +4,7 @@ import DestroyOnSpace from "./DestroyOnSpace.js";
 import GameObject from "./GameObject.js";
 import Input from "./Input.js";
 import Jump from "./Jump.js";
+import Particle from "./Particle.js";
 import Parallax from "./Parallax.js";
 import PhysicsBody from "./PhysicsBody.js";
 import Player from "./Player.js";
@@ -102,8 +103,9 @@ export default class Game {
             this.SpawnStartMenu();
         };
         this.StartGame = ()=>{
+            Game.instance.SetScrollingTerrainSpeed(2.5);
             this.SpawnPlayer(new Vector2(250, 130), new Vector2(18, 18));
-            this.SpawnPlatform(new Vector2(160,150), new Vector2(320,200));
+            this.SpawnPlatform(new Vector2(0,150), new Vector2(500,200));
             this.SpawnCatch();
         };
         this.SetCanvas = (options)=>{
@@ -172,7 +174,7 @@ export default class Game {
             // setup the platform
             var catcher = new GameObject();
             catcher.transform = new Transform({
-                position: new Vector2(0, 190),
+                position: new Vector2(0, 220),
                 size: new Vector2(320, 10)
             });
             catcher.AddComponent(new Collider());
@@ -184,11 +186,11 @@ export default class Game {
             this.objs.push(catcher);
         };
         this.SetScrollingTerrainSpeed = (speed)=>{
+            this.speed = speed;
             this.objs.forEach((obj)=> {
-                this.speed = speed;
-                var st = obj.GetComponent("ScrollTerrain");
-                if ( st !== null ){
-                    st.speed = this.speed;
+                var st = obj.GetComponent("ScrollingTerrain");
+                if ( st && st.speed ){
+                    st.speed = speed;
                 }
             });
         };

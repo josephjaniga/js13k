@@ -28,8 +28,8 @@ export default class ScrollingTerrain extends Component{
                 if ( newPositionY < 50 ){
                     newPositionY = 50;
                 }
-                if ( newPositionY > 180 ){
-                    newPositionY = 180;
+                if ( newPositionY > 150 ){
+                    newPositionY = 150;
                 }
                 this.link = Game.instance.SpawnPlatform(
                     new Vector2(

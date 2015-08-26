@@ -203,6 +203,10 @@ var _JumpJs = require("./Jump.js");
 
 var _JumpJs2 = _interopRequireDefault(_JumpJs);
 
+var _ParticleJs = require("./Particle.js");
+
+var _ParticleJs2 = _interopRequireDefault(_ParticleJs);
+
 var _ParallaxJs = require("./Parallax.js");
 
 var _ParallaxJs2 = _interopRequireDefault(_ParallaxJs);
@@ -334,8 +338,9 @@ var Game = (function () {
             _this.SpawnStartMenu();
         };
         this.StartGame = function () {
+            Game.instance.SetScrollingTerrainSpeed(2.5);
             _this.SpawnPlayer(new _Vector2Js2["default"](250, 130), new _Vector2Js2["default"](18, 18));
-            _this.SpawnPlatform(new _Vector2Js2["default"](160, 150), new _Vector2Js2["default"](320, 200));
+            _this.SpawnPlatform(new _Vector2Js2["default"](0, 150), new _Vector2Js2["default"](500, 200));
             _this.SpawnCatch();
         };
         this.SetCanvas = function (options) {
@@ -401,7 +406,7 @@ var Game = (function () {
             // setup the platform
             var catcher = new _GameObjectJs2["default"]();
             catcher.transform = new _TransformJs2["default"]({
-                position: new _Vector2Js2["default"](0, 190),
+                position: new _Vector2Js2["default"](0, 220),
                 size: new _Vector2Js2["default"](320, 10)
             });
             catcher.AddComponent(new _ColliderJs2["default"]());
@@ -413,11 +418,11 @@ var Game = (function () {
             _this.objs.push(catcher);
         };
         this.SetScrollingTerrainSpeed = function (speed) {
+            _this.speed = speed;
             _this.objs.forEach(function (obj) {
-                _this.speed = speed;
-                var st = obj.GetComponent("ScrollTerrain");
-                if (st !== null) {
-                    st.speed = _this.speed;
+                var st = obj.GetComponent("ScrollingTerrain");
+                if (st && st.speed) {
+                    st.speed = speed;
                 }
             });
         };
@@ -559,7 +564,7 @@ var Game = (function () {
 exports["default"] = Game;
 module.exports = exports["default"];
 
-},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./Parallax.js":9,"./PhysicsBody.js":11,"./Player.js":12,"./Rect.js":13,"./RectRenderer.js":14,"./ScrollingTerrain.js":15,"./SpriteRenderer.js":16,"./TextRenderer.js":17,"./Transform.js":18,"./Vector2.js":19}],6:[function(require,module,exports){
+},{"./Collider.js":2,"./Component.js":3,"./DestroyOnSpace.js":4,"./GameObject.js":6,"./Input.js":7,"./Jump.js":8,"./Parallax.js":9,"./Particle.js":10,"./PhysicsBody.js":11,"./Player.js":12,"./Rect.js":13,"./RectRenderer.js":14,"./ScrollingTerrain.js":15,"./SpriteRenderer.js":16,"./TextRenderer.js":17,"./Transform.js":18,"./Vector2.js":19}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -728,6 +733,34 @@ var _ComponentJs = require("./Component.js");
 
 var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
 
+var _GameJs = require("./Game.js");
+
+var _GameJs2 = _interopRequireDefault(_GameJs);
+
+var _GameObjectJs = require("./GameObject.js");
+
+var _GameObjectJs2 = _interopRequireDefault(_GameObjectJs);
+
+var _TransformJs = require("./Transform.js");
+
+var _TransformJs2 = _interopRequireDefault(_TransformJs);
+
+var _Vector2Js = require("./Vector2.js");
+
+var _Vector2Js2 = _interopRequireDefault(_Vector2Js);
+
+var _ScrollingTerrainJs = require("./ScrollingTerrain.js");
+
+var _ScrollingTerrainJs2 = _interopRequireDefault(_ScrollingTerrainJs);
+
+var _SpriteRendererJs = require("./SpriteRenderer.js");
+
+var _SpriteRendererJs2 = _interopRequireDefault(_SpriteRendererJs);
+
+var _ParticleJs = require("./Particle.js");
+
+var _ParticleJs2 = _interopRequireDefault(_ParticleJs);
+
 var Jump = (function (_Component) {
     _inherits(Jump, _Component);
 
@@ -797,11 +830,32 @@ var Jump = (function (_Component) {
         };
         this.Jump = function (force) {
             if (_this.lastJumpTime + _this.jumpCD <= Date.now()) {
+
                 _this.lastJumpTime = Date.now();
+
+                // jump sound
                 _this.jumpSound.pause();
                 _this.jumpSound.currentTime = 0;
                 _this.jumpSound.playbackRate = Math.random() * (_this.soundPitchMax - _this.soundPitchMin) + _this.soundPitchMin;;
                 _this.jumpSound.play();
+
+                // spawn a particle
+                var JumpUpParticle = new _GameObjectJs2["default"]();
+                JumpUpParticle.name = "JumpUpParticle";
+                JumpUpParticle.transform = new _TransformJs2["default"]({
+                    position: new _Vector2Js2["default"](_this.gameObject.transform.position.x, _this.gameObject.transform.position.y + _this.gameObject.transform.size.y * 0.25),
+                    size: new _Vector2Js2["default"](_this.gameObject.transform.size.x * 0.75, _this.gameObject.transform.size.y * 0.75)
+                });
+                JumpUpParticle.AddComponent(new _SpriteRendererJs2["default"]({
+                    animated: true,
+                    animations: [{ name: "Jump", frames: [8, 8, 8] }],
+                    playOnce: true
+                }));
+                JumpUpParticle.AddComponent(new _ParticleJs2["default"]({}));
+                JumpUpParticle.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _GameJs2["default"].instance.speed }));
+                JumpUpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 8;
+                _GameJs2["default"].instance.objs.push(JumpUpParticle);
+
                 if (_this.gameObject) {
                     _this.pb = _this.gameObject.GetComponent("PhysicsBody");
                 }
@@ -818,7 +872,7 @@ var Jump = (function (_Component) {
 exports["default"] = Jump;
 module.exports = exports["default"];
 
-},{"./Component.js":3}],9:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./GameObject.js":6,"./Particle.js":10,"./ScrollingTerrain.js":15,"./SpriteRenderer.js":16,"./Transform.js":18,"./Vector2.js":19}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -952,7 +1006,7 @@ var Particle = (function (_Component) {
         _classCallCheck(this, Particle);
 
         _get(Object.getPrototypeOf(Particle.prototype), "constructor", this).call(this, options);
-        this.lifeTime = 500;
+        this.lifeTime = options.lifeTime || 500;
         this.startTime = Date.now();
 
         //this.r = 255;
@@ -1135,7 +1189,7 @@ var PhysicsBody = (function (_Component) {
                         animations: [{ name: "puff", frames: [4, 5, 6] }],
                         playOnce: true
                     }));
-                    jumpParticle.AddComponent(new _ParticleJs2["default"]());
+                    jumpParticle.AddComponent(new _ParticleJs2["default"]({}));
                     jumpParticle.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _GameJs2["default"].instance.speed }));
                     jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 7;
                     _GameJs2["default"].instance.objs.push(jumpParticle);
@@ -1176,13 +1230,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _ComponentJs = require('./Component.js');
+var _ComponentJs = require("./Component.js");
 
 var _ComponentJs2 = _interopRequireDefault(_ComponentJs);
 
 var _GameJs = require("./Game.js");
 
 var _GameJs2 = _interopRequireDefault(_GameJs);
+
+var _GameObjectJs = require("./GameObject.js");
+
+var _GameObjectJs2 = _interopRequireDefault(_GameObjectJs);
+
+var _TransformJs = require("./Transform.js");
+
+var _TransformJs2 = _interopRequireDefault(_TransformJs);
+
+var _Vector2Js = require("./Vector2.js");
+
+var _Vector2Js2 = _interopRequireDefault(_Vector2Js);
+
+var _ScrollingTerrainJs = require("./ScrollingTerrain.js");
+
+var _ScrollingTerrainJs2 = _interopRequireDefault(_ScrollingTerrainJs);
+
+var _SpriteRendererJs = require("./SpriteRenderer.js");
+
+var _SpriteRendererJs2 = _interopRequireDefault(_SpriteRendererJs);
+
+var _ParticleJs = require("./Particle.js");
+
+var _ParticleJs2 = _interopRequireDefault(_ParticleJs);
 
 var Player = (function (_Component) {
     _inherits(Player, _Component);
@@ -1193,12 +1271,74 @@ var Player = (function (_Component) {
         _classCallCheck(this, Player);
 
         _get(Object.getPrototypeOf(Player.prototype), "constructor", this).call(this, options);
+
+        this.lastBump = Date.now();
+        this.timeStep = 10000; // ten seconds
+        this.speedStep = 0.25;
+
+        this.deathSoundSource = "data:audio/mp3;base64,/+MYxAAMgALqWUAQAm3LI0HW0MHwfAgIAhxPl+XBBxQEE8H/KVg+8H+XD/4IVg+D/8Hwf4nB80CBzD////4ntoEFccUttloF/+MYxAkPMM86WYUQAhA3btn/5xoe9lAcDsVjc9iMjGLcEFYgWFFhoUMoH0lPxcoy+LJOIQhGW6nYsS//5TYn/6UkG7IKmiuL/+MYxAcOIY7oAYg4AE1yaUN/j4sIYGZU1z/XLvr/eb0/3Pcbk3KAqJQtEperZv/yZ79X/re7f//dzn//+LElbt1OH/yAdEGI/+MYxAkNinLwAYUoALOjAIHA1kMxYmBxESSUOpfd1cVDzo6o6prKvssn7ev3/1+v/6pT/p//5B2V9KoOh0OwYVNL+nf0K37f/+MYxA0PAbLkAYU4ANfmKeTIBAEfojWdBwaFQDRKBybjUiev/lv+z9DJxD/hjw6z/iv5QkcU7/9zP7Aaz/wUJJEBGSxrJkdE/+MYxAwOyP7oAYkoAG2i+eQbZhZW2ffrVRwgIBuyGfeyU1QgeNh/tTpBcrUoivTrUj57Z9A/hH9P/3f0VQcj27f/wEAD/BDg/+MYxAsO0R7oAYVIACH////mRht/1c41PfVEb6RtLekxTJqMQng7/B919Tnf0G3fRR+l/Ur19aXfn2u/alXGILDAJKgs7Mo0/+MYxAoOkZLgAYYoAJjHl8//NIqSOnPn/laMJ6l+yfP+/kIHAIEgJN5UVv/D45/pFGV/9mRd//f/d//5ClX27IR/xdFEjB7x/+MYxAoNkQLoAYUwAEBw5CQmGP722fyDSbP7Y+jR/4KgRwxqRbMvPeun0I7G+p3b1dQA/X/5X//6lZbQKBRbWBQKLRaKh40A/+MYxA4QSY8qWYUQAsHuMUtQFM/+VW/+ilL/uyN7qjuSwcWFA3aZgpjf//4rg+//+KlX2/7/UwP7j//oKf4GAaqv6TMDwsRV/+MYxAcOAP7gAYhAAPsiBRAXa+YH7uD9WpLTwNSQeAW9ijo/9bj4Qo16jgu7TVBXgq7/+VO7Pwi70J1f/aoOLeGNt///+ot//+MYxAoNGRrgAYI4APjRi6RHF4OR3qNyaGRxpQNCMeDoxg35z3yQ//WhtVZgD0f2dRm7/OfxYrWorJDAVYORWOyAXANkYKk//+MYxBAMyVrYAYgoAOUDocq7xr/E2EUftN0zfp/T8CBxS9hM9lYbnP6PJf9n///JKgI23b/6nU3xDQEBGb+goxmWmQOEoA5R/+MYxBcK2ULkAYIoAHKIitJbF91iv1+7+/xrf//7iX3dNQIKA4sxMDKWoFKv+Qpf/mVb/530Zem2Yep4sByPOrcS+d+z/8gz/+MYxCYLYTrYAYU4AF//2f///2EVbtsxUbr5jEwgREEljMUi0gcOD/7kAJgKM0mHjvduVrhihd6/hv//X/+ckZrNO7SuSFXd/+MYxDMPoV7UAYdAAMx9v6DvcoO//1CplQQAgNBipb6P/r/ycv+uQIBgt/U90AdAHMcVeUOo+n3RP//yrn2///kP/wGai3/P/+MYxC8LATLUAYUoABxh4uBSq+aH7Uri+gb20PC8dxNNWl+Z6OBEWU9FSSLZptFsjq5dfc01Pap+qMjpv2X//6jhn1Nr/QN+/+MYxD4PocrIAYw4ALUJij27ft+Lif+AYdM3/foYfQyDp1GumhhYhiQIjcoWG3m9wqJfAmpwh2J7upH0//85/z6lNdbUBCSh/+MYxDoM4SLMAYVAAAtEtCryRVAT4F01mbcpJSus7M//TqnTBxO6j59kPZcNupSma5bP2+DhuOwHZuw79Sse/f8qeZxF8oY1/+MYxEETOVawAYxYAKez/L/KKW3//y4QJiLjuCu7fiACIpg/4EHiBZipQwcBYJDVMY7NOSjuVYRWNToqt6Um/ch3ixv8sv/T/+MYxC8N2Vq8AYU4APoR3Tz//4mA9QlSVUiJabGk0XzFJdlfLvv003mcrXd1eHkL+vLXqrfP41pdJT/ySSX/yji8uoq7/Afn/+MYxDIMwNqgAY1gAOsAQisNiQSBgUCgFub/wfjbr4PARFRcipv2K2ROZf7i2GQMPqPdUglHULf2v//0roxD//pVEml/6lLQ/+MYxDoM0Oa2WYcQAM9TARpRLoLuDcVMQU1FMy45OS41VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxEED8GGt4cIAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+        this.deathSound = new Audio(this.deathSoundSource);
+
+        this.soundSource = "data:audio/mp3;base64,/+MYxAAMcHpgAUkYAQQDCCyMLgmGyfPUFECBAgRo257/NGgQMAAAAB4eHh6QAAAAQf4eHv/4Ah//1IAf/h49MpOPYqTx1iUN/+MYxAkOYSa4AYsQAFql7/USLhvWJpD7GdoUqaEfht+bdGFnA5Tn/cz9rCyC1vp+UBcmBHf/WlZGj/kf4ZW2/tsOpHnbFpxQ/+MYxAoOwM7UyYwYAB8RTC6aWlTjkLDEF3P3pWQTRra12l8WW6WiEdumgJFAFQxnpAkglVn+m7IfUz+xTuglM7LjdE800LEG/+MYxAoNONLgAYkYACTnVPFahCp5tuzdgZTJiVMpHiCBdAjQcxaUJvEQuMPI+zuYaYIaP////9IaRMKEBBXgGkDkG/WJWicT/+MYxBAOiSbkAYkYAKYrUJ2taURmH2Tto5oiLBbx9CRC//L9el3otyz8vxgUCq8COpu6iUr5dNVYNw0Mo0WMUZQsrySXs9Mq/+MYxBAOkL7oAYkYAEKajcmWrpyN8rRMy0SYhKM5VwwGrpcP9K0nmuel3fU87DS95JPR/V//WtUPIyNUONLpCpaZMwktntux/+MYxBAPaNbsAYkwALFSzEz7jeKswpGl9vJ23Y584cw+wsPOJqQtlYYc5j0tQ+zh+i27/lq7r/7/8PK2UfcTZoBT+qvVtM9L/+MYxA0NyRLwAYwwAAPTy+817olq6bOV58nXkPCE13QQ3/+t//w9ksWTA7f6SSN3/t7U9X/9FdUNDUB4NWk2qkZI6ZgkyJwY/+MYxBARGNb0AYkYAO84gny6Br5kiyayoQ90MQ/kbhgphkEAZA4YDAGpDy2ERWzFLpY6epFLOj3qe1uxe//2o/0qnwAo+gMx/+MYxAYM4HcAKcMYAA4PUiCDuRBBqUggYd2jxKPn0D4AOBgJmSJ0UC6xGd79cLtVWD7lMod1f/9+qQpNEgPeu+0dbnIkUjzm/+MYxA0K0OsEADDGgCkbLVOXECHRVqWqS2F01tl+MLadOm6EM/YkLbO26ipPwsAgaBYM1FNBTWgxVHKlIvHJOiMRTAghBYOD/+MYxBwMeIr4ADGMAAMNJCklLBUEhC5AiJqIFb4+KN2//9mDmDRmDUclCQhkARRjwLNydWgYC4XM+Kk44h1vSLLWw6SFBQCk/+MYxCUMYMr0ABjGKCeXsYdRoRq/R0f//qVJZbf7hTCQwUmEvHNi1msZ7y8r/qdlnak2trz6vPjRKziD0DRY00klpHSzbMcc/+MYxC4M2ObkAUYQADfWNL/9CjgLBAGjewYcCNOupRRWEjBCmJxBwuLN9uzmbCHJ14Gax9dRc+ivK//IP53/ZTUDyRySWj/i/+MYxDULWQbcAYIYACPREHPUDQNPgqd+JQWxKCp6oGjygaf0cSgqCvBoOcSwVBX4lBoO8RA0DQNf4KpMQU1FMy45OS41qqqq/+MYxEINKALBucEQAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/+MYxEgAAANIAAAAAKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+        this.speedSound = new Audio(this.soundSource);
+
+        this.Update = function () {
+            if (_this.lastBump + _this.timeStep <= Date.now()) {
+                _this.lastBump = Date.now();
+                _GameJs2["default"].instance.speed += _this.speedStep;
+                _GameJs2["default"].instance.SetScrollingTerrainSpeed(_GameJs2["default"].instance.speed);
+                // play a speed increase noise
+                _this.speedSound.pause();
+                _this.speedSound.currentTime = 0;
+                _this.speedSound.play();
+            }
+        };
+
         this.Die = function () {
-            //console.log("you died");
-            //Game.instance.paused = true;
+            var p = _this.gameObject.transform.position,
+                s = _this.gameObject.transform.size,
+                max = 2,
+                min = 0;
+
+            for (var i = 0; i < 50; i++) {
+                var size = _this.gameObject.transform.size.x,
+                    rX = (Math.random() * 2 - 1) * size,
+                    rY = (Math.random() * 2 - 1) * size,
+                    scaleVariant = Math.random() * .75 + .1;
+
+                // spawn a particle
+                var DeathParticle = new _GameObjectJs2["default"]();
+                DeathParticle.name = "DeathParticle";
+                DeathParticle.transform = new _TransformJs2["default"]({
+                    position: new _Vector2Js2["default"](_this.gameObject.transform.position.x + rX, _this.gameObject.transform.position.y + rY),
+                    size: new _Vector2Js2["default"](_this.gameObject.transform.size.x * scaleVariant, _this.gameObject.transform.size.y * scaleVariant)
+                });
+                DeathParticle.AddComponent(new _SpriteRendererJs2["default"]({
+                    animated: true,
+                    animations: [{ name: "Death", frames: [9] }],
+                    playOnce: false
+                }));
+                DeathParticle.AddComponent(new _ParticleJs2["default"]({ lifeTime: 2000 }));
+                DeathParticle.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _GameJs2["default"].instance.speed }));
+                DeathParticle.GetComponent("SpriteRenderer").ticksPerFrame = 8;
+                _GameJs2["default"].instance.objs.push(DeathParticle);
+            }
+
+            _GameJs2["default"].instance.SetScrollingTerrainSpeed(0.25);
             _this.gameObject.Destroy();
-            _GameJs2["default"].instance.reset("All");
-            _GameJs2["default"].instance.init();
+
+            // play a death sound
+            _this.deathSound.pause();
+            _this.deathSound.currentTime = 0;
+            _this.deathSound.play();
+
+            //Game.instance.paused = true;
+
+            setTimeout(function () {
+                //Game.instance.paused = false;
+                _GameJs2["default"].instance.reset("All");
+                _GameJs2["default"].instance.init();
+            }, 3000);
         };
     }
 
@@ -1208,7 +1348,7 @@ var Player = (function (_Component) {
 exports["default"] = Player;
 module.exports = exports["default"];
 
-},{"./Component.js":3,"./Game.js":5}],13:[function(require,module,exports){
+},{"./Component.js":3,"./Game.js":5,"./GameObject.js":6,"./Particle.js":10,"./ScrollingTerrain.js":15,"./SpriteRenderer.js":16,"./Transform.js":18,"./Vector2.js":19}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1351,8 +1491,8 @@ var ScrollingTerrain = (function (_Component) {
                 if (newPositionY < 50) {
                     newPositionY = 50;
                 }
-                if (newPositionY > 180) {
-                    newPositionY = 180;
+                if (newPositionY > 150) {
+                    newPositionY = 150;
                 }
                 _this.link = _GameJs2["default"].instance.SpawnPlatform(new _Vector2Js2["default"](newPositionX, newPositionY), newSize);
             }
@@ -1432,8 +1572,8 @@ var SpriteRenderer = (function (_Component) {
         this.currentAnimation = 0;
 
         this.sprite = new Image();
-        //this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAgCAMAAACioYPHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3QkU2MjJGMDQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3QkU2MjJFRjQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6cMsTrAAAAElBMVEX4+Pj/5KwA7NwAeP8AAAD///9eGScjAAAABnRSTlP//////wCzv6S/AAACF0lEQVR42uyXyZLDIAxEATX//8tjJJkllsA4Ofgw1Eylyk7bT60FEvLLV/gH3FjIONYbAZlK8CqifrwCEETIFU8Q5do7AA+WQjMA6rX3AGJcB+2LADmdjBj5r/zToxRbXfYTvSQ0xBhCYMgzwVuAH132EM/WH0QJoVgXggLiOmYWBo1dtm/wVI9UAWNEqnwd4NKgBeCXeiTEwCmOVGivg3plEFaA3+qTNEgxsPFtAtYuewg40xdC+U7P1wCxLrGuy/YNWumlDIXPBWxjyLSo6zLsG7TQC6EsmIeFPsASi/uCjyK5a9BKfwOwBXh8hy6PqF32mQXDIPP9Cz0mgLz7DQG2Sdm/gfMYcXnKxaBkTpKZvlwkXRdA2a37AEE2YdTbFmCvt9RTfdlKKqEN2AeIbFvIy/G36QWQkDf05ZISGikWB1MN0AEEcXLg2ItmEOz4Jnq5pnVo1KDwa4BJz7fWqYjDh/l2PdQlPwG+vjHD7mIhlOrV462zGRCc9En5lOiSHI839GilB7LHDJ93MrRMAbPIeTsi+94JSHwU8R7g6DXBrR/snaQ2u1Nl8gJ7hLS9jjG9B3j69luOPMA2y0u/kEvoDbl+lp0DA5t6w8ARENIp4qKXZJddZxnmD5jo7wBKg7CLrk2+u+cNLUNs6peAdXxNf3Y4Q264sTj5PwSEsdFsGHBP/k2KcetH2/rIn5/ph2nS1p8AAwCbD1ijbePFdwAAAABJRU5ErkJggg==';
-        this.sprite.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAAgCAMAAADKd1bWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxQTRFRjc0RTQzQUMxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxQTRFRjc0RDQzQUMxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MzgwQTE4Q0JEMzIwNjgxMTgyMkE4MEI1QTRGQzY5RDQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5xOwv5AAAAGFBMVEXA3YstNhlSdCSTuWNScyMuNxn///////9VqbdPAAAACHRSTlP/////////AN6DvVkAAAPoSURBVHja5JmLcqUgDIaDEHj/N97cgKCgx84pO7PrtOciasmXPwmhUP75I8qR5LDv8pnPlgL/gf1kq9hrb8bCCGwFEItS321/NVheQ/vCP3EPAEQz/6DDEMi5TQAIewjq+yAYQggmgi0AEACLmV8R6LktAAJZrwdZTADc17QFANnK1jb7iUA9twGAuFus5ZfASgimARqDXQAQnf0MALcCsMhXEtHSQGA1bAsBYAAgPwfhgG0hkBwBkYGEgJ5lCWzJ4ir4DJBzZgjbAoABBJN+kAyon+vbKwWcsvhrDWBGfskGYI/9WgXU80nNZgXUaBgBPDh4zOIvBYLYADCLbfaXmFz0G4DUy4BLgo8OHrL4a4EQAMgSAgwAd9lfUksCIgEBEFNNCdEDeHDwmMXfC4QJoCb/jfbXJOAOWRcBmQ5jGXxwcBmy+HuBaBQYhY32F2gr/5b5qCki95M6yH741MFkgMvi7wVSAYj9OwGQzFPtB9wSsAYBTB08naHP4vhaIF0Ce+0nAlxzuReEugbWBpneIQSYOng6SZ/Fp8N3AvmLAFjqNQi0CsZKIIwAnINZqtda7rM43goE78zfDiDWDjimEkrtiwlIqQB4TqODZysVtJG5FeP91+HYj605sPj+H/rugGAomgO0Ng0OhjkBgGY/3gnkcjdydfwtAPRn82ps7P91Q8giIPIWWQcwOLjMJVCP6UrW33/hh4cj8HUAzGC9FLbcJ3mfvhaNflkZRa8AdA6eAkDo9k/pOIHMABw88AsAcnuZqILst7W/bAZxDPgNESuD6JTNk0RNC7OORny8CI+e5M4A1P6aC74PIF8BGJNYtPmRZXC0SuAkAdfpywznKwGBA4sA6P6X+y/2G4DjVwDkCQD5VY8nYyC7QDMA6t2ClqsRbboXM6MQwHIDQO4fH2ABUD/iF6U/UX8LgVwVIO6XTqhukusOgd8QUZdhs38+TQYQ53XcCYguOT2gVY3lk+9y/EcA2mWmhpy7AlLdEpQkCCn0wgCTYl337+ZREFcEhlq/esAPBNAB5PPh5d6+5tI/dQC1/yfLIdn+yAUAx2cUE2mWqyBYsrFaj7cP+BGAPK/1JwAlnwZyLYM97VM/QItBa4WC9MXXWsWOPNYL1jWBJm9W0OIBNwAmrnUE9NdGK5JTxjvdnmsfIP1/0P6f1wHWEqXz/wUkdR3zEji56mZg/YA1gDbxnM95bTRMAJxqfz7d39/qhpBui1Kadp1RWwh51z4pFO+i+7Pb8UkAl7xnJ934WSjD+DjW/ieoRdBtD3BGgMlC996C1SUftno3FywioC/2Vnzu77alP+cCSMP2AO/d/RFgAI4xu7IsDOOlAAAAAElFTkSuQmCC";
+
+        this.sprite.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAAgCAMAAABUzVF2AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBRTJFOUQ1NDQzQkQxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBRTJFOUQ1MzQzQkQxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RDIwMzBBNDVFNDIwNjgxMTgyMkE4MEI1QTRGQzY5RDQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4MNaQLAAAAGFBMVEXA3YstNhlSdCSTuWNScyMuNxn///////9VqbdPAAAACHRSTlP/////////AN6DvVkAAAT5SURBVHja5JqBcuMqDEUhgPj/P14kEEggSNxNeTNvPZ0mNrFrTq6QdF2X//dboC3S1vbpPR79+6u7f4BfYUW82ktj+SWCVwGG/J1v/Sk/Bka/fd/Bn3E38OEFoW53AabU8L3K1m6ajl0CWL4276v2PGH03jcRSjCf8esY7wFMzqXc8DHCeuwKQF/o1a0QKwDFbgwSDHwAbj7i7vBDWp1fIcjHLgAkuREt/OVRib5psIw5FcF7Ea782t4tgCkJfggwXQXYVr5KMrRl0KMa9RK4JWgO4+61EHYI0NHPq+B010I4CoIkQwrhejTUwqYCgkMUSwGKHPIU4I+zaA1YcK78aYR4LYARoG+h6ymD1Pf80hVI7IggHATYWTaEzwBOWfSxBhMk/AUN4B1+NQtX5cWKDRXI0awANmUZCEGiE4cmgG8EprPoQ4Gm1AEiy2v8cohi9WsA40jDTisQbBEOAY6xBeBbgaks+ligBaADCmEEmG7xy7EvgiRBAhgiL4nBCQEOQkay4ADu8bsCfCMwnUWfCxQJppp8L/LjRVBsVFe7UG5klDEsQBmskwAHNcg2wDOfrLLoc4HWKG4UL/LLrne+PXOU3FvkV9QZnQRIEK2eBGQAt1zNb92nAisARBZ9LlAGSPxuAixhGrkfFi0IBzEjAu5x15ZOCVAw1IW0LtOSCXBk0fRYoEOCd/kVglgzoRfjuIerBld5dd7rBsPMwlKAIBhOnYgUmDlJmUXN4ZNA/0OAGKocxLWKCUzQLwBh9WVGWhnBO0g7W2AYamstJ7NoOgo0nfBdBxjYwQox+8y+FloxDHB0F2B2vEKaiicDxDlpgVmVbmojNgV9/jocxnY1h2Tp/7nhDhLGHCdSomJZAaoWRAKstYUSmLMJOtf5pZNAl7MTVje/BRAOXp72/6oh3SJ4dMJ5Et8GoJJpFn5gna8UWLYlyJvZicnzF/7pJQh+HeDBRgnd/6O8W3ZzXf2osg5xuc6yDK6ltTwiFJiEwEyAyQ1+Jl0hUAvgCwd+ASBYjjyrpfBrvS+Z0RjD0lCNm3oFzMPSugZp6ScRmTjJVJdFyxEgjW3CeySJGWDlx2vh9wFCBusgdZjVPKA2LrRMLCS5+SbAthJGlQ36mYicPs3QrgQJrtsE8NAfnb/wawBfvwLQLN6gZuDAnXB1Es4AAZTjNz8HEU6gAljVlVPLlSm16S6YAhFM+QCQztcXaAHMb9MXQzdvTFCeLCmQ5EdOAj/krA6hmUZgE8SGwSrrwCqZ1PnZ00SAwa7jhIDLR6YL9Ky9vfLbxznvAPaPQQ+5rsDIj0QoibjoR2LO2SxkrExs3pIzijV+fmFHcdgRVLXe7gI/EKBavvW2Ciezs5xlCMfh/xVyLjZ/dQUIYqXTQQybr9Tp2VV8OP9tEG/ZtlovHS/wI4Bg13oTwKkh4yRS03ADWPrh0ow0KwGdwWCGMMDy58b3owfcWmugkF77hmtPsIcnKnhzgQNAQ1rilvvi3l07WNzh6XTgPpj8P1/9P6wDm6UQ5XNhIcFNWW7dmgZIS//LLmGMTx0G9hfYAxThs3SjCsyYIhglsMiZ6qlcfaxU0pxwFuZCWifaT1vFSVrvIiydVrfPTk/vBLjkDRaG8OymmapxPdb/J6YWMcIexBXx73vttVE7E9h95EOr5fCBTQSLZmDD93x2a31xLXRR2YPf+EenPwIMAAH/8kM0cqlcAAAAAElFTkSuQmCC";
         this.frameSize = new _Vector2Js2["default"](32, 32);
         this.totalFrames = 4; // 5 with 0 based index
         this.frameIndex = 0;

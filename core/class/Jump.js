@@ -1,4 +1,11 @@
 import Component from "./Component.js";
+import Game from "./Game.js";
+import GameObject from "./GameObject.js";
+import Transform from "./Transform.js";
+import Vector2 from "./Vector2.js";
+import ScrollingTerrain from "./ScrollingTerrain.js";
+import SpriteRenderer from "./SpriteRenderer.js";
+import Particle from "./Particle.js";
 
 export default class Jump extends Component{
     constructor(options){
@@ -64,11 +71,32 @@ export default class Jump extends Component{
         };
         this.Jump = (force)=>{
             if ( this.lastJumpTime + this.jumpCD <= Date.now() ){
+
                 this.lastJumpTime = Date.now();
+
+                // jump sound
                 this.jumpSound.pause();
                 this.jumpSound.currentTime = 0;
                 this.jumpSound.playbackRate = Math.random() * (this.soundPitchMax - this.soundPitchMin) + this.soundPitchMin;;
                 this.jumpSound.play();
+
+                // spawn a particle
+                var JumpUpParticle = new GameObject();
+                JumpUpParticle.name = "JumpUpParticle";
+                JumpUpParticle.transform = new Transform({
+                    position: new Vector2(this.gameObject.transform.position.x,this.gameObject.transform.position.y+this.gameObject.transform.size.y*0.25),
+                    size: new Vector2(this.gameObject.transform.size.x*0.75, this.gameObject.transform.size.y*0.75)
+                });
+                JumpUpParticle.AddComponent(new SpriteRenderer({
+                    animated: true,
+                    animations: [{name:"Jump" , frames:[8, 8, 8]}],
+                    playOnce: true
+                }));
+                JumpUpParticle.AddComponent(new Particle({}));
+                JumpUpParticle.AddComponent(new ScrollingTerrain({speed:Game.instance.speed}));
+                JumpUpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 8;
+                Game.instance.objs.push(JumpUpParticle);
+
                 if ( this.gameObject ){
                     this.pb = this.gameObject.GetComponent("PhysicsBody");
                 }

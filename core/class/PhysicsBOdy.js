@@ -117,7 +117,7 @@ export default class PhysicsBody extends Component {
                         animations: [{name:"puff" , frames:[4, 5, 6]}],
                         playOnce: true
                     }));
-                    jumpParticle.AddComponent(new Particle());
+                    jumpParticle.AddComponent(new Particle({}));
                     jumpParticle.AddComponent(new ScrollingTerrain({speed:Game.instance.speed}));
                     jumpParticle.GetComponent("SpriteRenderer").ticksPerFrame = 7;
                     Game.instance.objs.push(jumpParticle);
