@@ -11,6 +11,7 @@ var babelify    = require('babelify'),
     zip         = require('gulp-zip'),
     source      = require('vinyl-source-stream'),
     buffer      = require('vinyl-buffer'),
+    uglify      = require('gulp-uglify'),
 
     // the filepath setup
     _DATESTAMP_     = Date.now(),
@@ -59,17 +60,23 @@ gulp.task('buildIndex', function() {
 
 gulp.task('buildCore', function() {
     //del(["core/core.es5*"]);
-    return browserify({
+    var bundler = browserify({
             entries: "./core/Main.js",
             debug: false
-        })
-        .transform(babelify)
-        .bundle()
+        }).transform(babelify, {});
+
+    bundler.bundle()
         .pipe(source('core.es5.js'))
+        .pipe(gulp.dest(CORE_DEST))
+        .pipe(gulp.dest(DEV_CORE_DEST));
+
+    return bundler.bundle()
+        .pipe(source('core.es5.min.js'))
         .pipe(buffer())
-        .pipe(minify({
-            ignoreFiles: ['min.js']
-        }))
+        //.pipe(minify({
+        //    ignoreFiles: ['min.js']
+        //}))
+        .pipe(uglify())
         .pipe(gulp.dest(CORE_DEST))
         .pipe(gulp.dest(DEV_CORE_DEST));
 });

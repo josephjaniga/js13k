@@ -817,15 +817,17 @@ var Jump = (function (_Component) {
                 }
             }
 
-            if (_this.pb.grounded) {
+            if (_this.pb && _this.pb.grounded) {
                 _this.jumpOne = false;
                 _this.doubleJump = false;
             }
 
-            if (_this.pb.grounded && _this.SpriteRenderer) {
-                _this.SpriteRenderer.currentAnimation = 0;
-            } else {
-                _this.SpriteRenderer.currentAnimation = 1;
+            if (_this.SpriteRenderer) {
+                if (_this.pb && _this.pb.grounded) {
+                    _this.SpriteRenderer.currentAnimation = 0;
+                } else {
+                    _this.SpriteRenderer.currentAnimation = 1;
+                }
             }
         };
         this.Jump = function (force) {
@@ -1484,16 +1486,18 @@ var ScrollingTerrain = (function (_Component) {
                 if (newPositionY > _this.gameObject.transform.position.y) {
                     // we can add more distance
                     var additionalDistance = (newPositionY - _this.gameObject.transform.position.y) * 0.5;
-                    //console.log("its lower so add more distance: " + additionalDistance + " " + newPositionX);
                     newPositionX -= additionalDistance;
                 }
 
-                if (newPositionY < 50) {
-                    newPositionY = 50;
-                }
-                if (newPositionY > 150) {
-                    newPositionY = 150;
-                }
+                newPositionY = Math.min(Math.max(newPositionY, 50), 150);
+
+                //if ( newPositionY < 50 ){
+                //    newPositionY = 50;
+                //}
+                //if ( newPositionY > 150 ){
+                //    newPositionY = 150;
+                //}
+
                 _this.link = _GameJs2["default"].instance.SpawnPlatform(new _Vector2Js2["default"](newPositionX, newPositionY), newSize);
             }
 
@@ -1680,7 +1684,6 @@ var TextRenderer = (function (_Component) {
         this.fontWeight = options.fontWeight || 'normal';
         this.textAlign = options.textAlign || 'start';
         this.fillStyle = options.fillStyle || 'black';
-        this.Update = function () {};
         this.Draw = function (ctx) {
             ctx.font = _this.font;
             ctx.fontWeight = _this.fontWeight;
@@ -1722,7 +1725,6 @@ var Transform = (function (_Component) {
         _classCallCheck(this, Transform);
 
         _get(Object.getPrototypeOf(Transform.prototype), "constructor", this).call(this, options);
-        //console.log("Transform | constructor");
         this.position = options.position;
         this.size = options.size;
     }

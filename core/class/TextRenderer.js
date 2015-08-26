@@ -8,9 +8,6 @@ export default class TextRenderer extends Component{
         this.fontWeight = options.fontWeight || 'normal';
         this.textAlign = options.textAlign || 'start';
         this.fillStyle = options.fillStyle || 'black';
-        this.Update = ()=>{
-
-        };
         this.Draw = (ctx)=>{
             ctx.font = this.font;
             ctx.fontWeight = this.fontWeight;

@@ -58,16 +58,19 @@ export default class Jump extends Component{
 
             }
 
-            if ( this.pb.grounded ){
+            if ( this.pb && this.pb.grounded ){
                 this.jumpOne = false;
                 this.doubleJump = false;
             }
 
-            if ( this.pb.grounded && this.SpriteRenderer ){
-                this.SpriteRenderer.currentAnimation = 0;
-            } else {
-                this.SpriteRenderer.currentAnimation = 1;
+            if ( this.SpriteRenderer ){
+                if ( this.pb && this.pb.grounded ){
+                    this.SpriteRenderer.currentAnimation = 0;
+                } else {
+                    this.SpriteRenderer.currentAnimation = 1;
+                }
             }
+
         };
         this.Jump = (force)=>{
             if ( this.lastJumpTime + this.jumpCD <= Date.now() ){

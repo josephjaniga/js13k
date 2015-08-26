@@ -21,16 +21,18 @@ export default class ScrollingTerrain extends Component{
                 if ( newPositionY > this.gameObject.transform.position.y ){
                     // we can add more distance
                     var additionalDistance = (newPositionY - this.gameObject.transform.position.y) * 0.5;
-                    //console.log("its lower so add more distance: " + additionalDistance + " " + newPositionX);
                     newPositionX -= additionalDistance;
                 }
 
-                if ( newPositionY < 50 ){
-                    newPositionY = 50;
-                }
-                if ( newPositionY > 150 ){
-                    newPositionY = 150;
-                }
+                newPositionY = Math.min(Math.max(newPositionY, 50), 150);
+
+                //if ( newPositionY < 50 ){
+                //    newPositionY = 50;
+                //}
+                //if ( newPositionY > 150 ){
+                //    newPositionY = 150;
+                //}
+
                 this.link = Game.instance.SpawnPlatform(
                     new Vector2(
                         newPositionX,
