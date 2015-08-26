@@ -18,6 +18,8 @@ import ScrollingTerrain from "./ScrollingTerrain.js";
 export default class PhysicsBody extends Component {
     constructor(options){
         super(options);
+
+        console.log("player spawned - added PB");
         this.gravity = new Vector2(0,0.3);
         this.velocity = Vector2.zero();
         this.acceleration = Vector2.zero();
@@ -28,12 +30,20 @@ export default class PhysicsBody extends Component {
         this.grounded = false;
         this.lastGrounded = false;
 
+
         this.Update = ()=>{
+
+            //console.log(this.gameObject.GetComponent("Collider"));
+
+            // assign the Collider if there is one
+            if ( this.gameObject && !this.collider ) {
+                this.collider = this.gameObject.GetComponent("Collider");
+            }
+
             if ( !this.isKinematic ){
                 this.Step();
             }
         };
-        this.Draw = ()=>{};
         this.Step = ()=>{
             // recompute velocity
             this.velocity.x += this.acceleration.x + this.gravity.x;
@@ -42,11 +52,6 @@ export default class PhysicsBody extends Component {
             // drag?
             this.velocity.x *= 0.9;
             this.velocity.y *= 0.9;
-
-            // assign the Collider if there is one
-            if ( this.collider === null ) {
-                this.collider = this.gameObject.GetComponent("Collider");
-            }
 
             var xCol = false,
                 yCol = false,
@@ -129,6 +134,7 @@ export default class PhysicsBody extends Component {
 
         };
         this.AABB = (rect1, rect2)=>{
+            console.log("collisions??? " + this.gameObject.name);
             var collision = false;
             if (rect1.position.x < rect2.position.x + rect2.size.x &&
                 rect1.position.x + rect1.size.x > rect2.position.x &&
