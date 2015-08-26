@@ -102,7 +102,7 @@ export default class Game {
             this.SpawnStartMenu();
         };
         this.StartGame = ()=>{
-            this.SpawnPlayer(new Vector2(250, 130), new Vector2(15, 15));
+            this.SpawnPlayer(new Vector2(250, 130), new Vector2(18, 18));
             this.SpawnPlatform(new Vector2(160,150), new Vector2(320,200));
             this.SpawnCatch();
         };
@@ -124,7 +124,7 @@ export default class Game {
             platform.AddComponent(new SpriteRenderer({
                 animated: false,
                 tiled: true,
-                tiledIndex: 0
+                tiledIndex: 7
             }));
             platform.name = "Platform";
 
@@ -136,7 +136,7 @@ export default class Game {
             deadArea.AddComponent(new Collider());
             deadArea.AddComponent(new ScrollingTerrain({speed:this.speed}));
             deadArea.AddComponent(new RectRenderer());
-            deadArea.color = "rgba(255,0,0,1)";
+            deadArea.color = "rgba(255,0,0,0)";
             deadArea.name = "CollisionDeath";
 
             //this.RecalculatePlatforms();
@@ -308,6 +308,15 @@ export default class Game {
 
                 frontMountain.name = "FrontMountain";
                 this.objs.push(frontMountain);
+
+            var shadeBG = new GameObject();
+            shadeBG.transform = new Transform({
+                    position: new Vector2(0, 0),
+                    size: this.resolution
+                });
+            shadeBG.color = "rgba(0,0,0,0.45)";
+            shadeBG.AddComponent(new RectRenderer());
+            this.objs.push(shadeBG);
         };
     }
     static get instance() {

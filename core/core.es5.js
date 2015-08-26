@@ -334,7 +334,7 @@ var Game = (function () {
             _this.SpawnStartMenu();
         };
         this.StartGame = function () {
-            _this.SpawnPlayer(new _Vector2Js2["default"](250, 130), new _Vector2Js2["default"](15, 15));
+            _this.SpawnPlayer(new _Vector2Js2["default"](250, 130), new _Vector2Js2["default"](18, 18));
             _this.SpawnPlatform(new _Vector2Js2["default"](160, 150), new _Vector2Js2["default"](320, 200));
             _this.SpawnCatch();
         };
@@ -356,7 +356,7 @@ var Game = (function () {
             platform.AddComponent(new _SpriteRendererJs2["default"]({
                 animated: false,
                 tiled: true,
-                tiledIndex: 0
+                tiledIndex: 7
             }));
             platform.name = "Platform";
 
@@ -368,7 +368,7 @@ var Game = (function () {
             deadArea.AddComponent(new _ColliderJs2["default"]());
             deadArea.AddComponent(new _ScrollingTerrainJs2["default"]({ speed: _this.speed }));
             deadArea.AddComponent(new _RectRendererJs2["default"]());
-            deadArea.color = "rgba(255,0,0,1)";
+            deadArea.color = "rgba(255,0,0,0)";
             deadArea.name = "CollisionDeath";
 
             //this.RecalculatePlatforms();
@@ -526,6 +526,15 @@ var Game = (function () {
 
             frontMountain.name = "FrontMountain";
             _this.objs.push(frontMountain);
+
+            var shadeBG = new _GameObjectJs2["default"]();
+            shadeBG.transform = new _TransformJs2["default"]({
+                position: new _Vector2Js2["default"](0, 0),
+                size: _this.resolution
+            });
+            shadeBG.color = "rgba(0,0,0,0.45)";
+            shadeBG.AddComponent(new _RectRendererJs2["default"]());
+            _this.objs.push(shadeBG);
         };
     }
 
@@ -743,6 +752,8 @@ var Jump = (function (_Component) {
         this.soundSource = "data:audio/mp3;base64,/+MYxAALeAMRuUEQArT4o7LLw/ggCb9YY3orfAAYy5//E6z8H+oMS4fUCAIf6pR3/E+T///5d8QO/D4XHPD+DfHROEnTxLGD/+MYxA0O6TcMAYcwAO48Nn/uxT26BMMnf7nAwN/7fdq//69Ntlk0+/PmlwuHzG0qR29n4jBwlB/+vsy9DNxS43f///////HU/+MYxAwQI0L4AY04AIEgGhF//46WyHzqjVRJF43P/mzW5s5H0Eb/+5hjfzRsfWTHCBM//qavr//8353+YaXM/+IlEgHIC4Su/+MYxAYOuxKoCZJoALIaaJ/dD/zG//qSMWV//76X//v6LI1f//7moOoYwHsEiHcUtv///90dKqp9X////0l9aki8TEFNRTMu/+MYxAYAAANIAcAAADk5LjWqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
 
         this.jumpSound = new Audio(this.soundSource);
+        this.soundPitchMin = .9;
+        this.soundPitchMax = 3;
 
         this.Update = function () {
 
@@ -787,6 +798,9 @@ var Jump = (function (_Component) {
         this.Jump = function (force) {
             if (_this.lastJumpTime + _this.jumpCD <= Date.now()) {
                 _this.lastJumpTime = Date.now();
+                _this.jumpSound.pause();
+                _this.jumpSound.currentTime = 0;
+                _this.jumpSound.playbackRate = Math.random() * (_this.soundPitchMax - _this.soundPitchMin) + _this.soundPitchMin;;
                 _this.jumpSound.play();
                 if (_this.gameObject) {
                     _this.pb = _this.gameObject.GetComponent("PhysicsBody");
@@ -1322,7 +1336,7 @@ var ScrollingTerrain = (function (_Component) {
             // no link yet and on screen
             if (_this.link === null && _this.gameObject.name === "Platform" && _this.gameObject.transform.position.x > -50) {
 
-                var newSize = new _Vector2Js2["default"](_this.RandomRange(80, 320), 200),
+                var newSize = new _Vector2Js2["default"](_this.RandomRangePlatformSize(64, 384, 64), 200),
                     newPositionX = _this.gameObject.transform.position.x - newSize.x - _this.RandomRange(150, 50),
                     newPositionY = _this.gameObject.transform.position.y + _this.RandomRange(30, -30);
 
@@ -1352,6 +1366,10 @@ var ScrollingTerrain = (function (_Component) {
         };
         this.RandomRange = function (max, min) {
             return Math.floor(Math.random() * (max - min)) + min;
+        };
+        this.RandomRangePlatformSize = function (max, min, roundTo) {
+            var x = Math.floor(Math.random() * (max - min)) + min;
+            return x - x % roundTo;
         };
     }
 
@@ -1415,7 +1433,7 @@ var SpriteRenderer = (function (_Component) {
 
         this.sprite = new Image();
         //this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAgCAMAAACioYPHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3QkU2MjJGMDQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3QkU2MjJFRjQxN0YxMUU1OEJCRkIxQzk0RUE2MzZGRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6cMsTrAAAAElBMVEX4+Pj/5KwA7NwAeP8AAAD///9eGScjAAAABnRSTlP//////wCzv6S/AAACF0lEQVR42uyXyZLDIAxEATX//8tjJJkllsA4Ofgw1Eylyk7bT60FEvLLV/gH3FjIONYbAZlK8CqifrwCEETIFU8Q5do7AA+WQjMA6rX3AGJcB+2LADmdjBj5r/zToxRbXfYTvSQ0xBhCYMgzwVuAH132EM/WH0QJoVgXggLiOmYWBo1dtm/wVI9UAWNEqnwd4NKgBeCXeiTEwCmOVGivg3plEFaA3+qTNEgxsPFtAtYuewg40xdC+U7P1wCxLrGuy/YNWumlDIXPBWxjyLSo6zLsG7TQC6EsmIeFPsASi/uCjyK5a9BKfwOwBXh8hy6PqF32mQXDIPP9Cz0mgLz7DQG2Sdm/gfMYcXnKxaBkTpKZvlwkXRdA2a37AEE2YdTbFmCvt9RTfdlKKqEN2AeIbFvIy/G36QWQkDf05ZISGikWB1MN0AEEcXLg2ItmEOz4Jnq5pnVo1KDwa4BJz7fWqYjDh/l2PdQlPwG+vjHD7mIhlOrV462zGRCc9En5lOiSHI839GilB7LHDJ93MrRMAbPIeTsi+94JSHwU8R7g6DXBrR/snaQ2u1Nl8gJ7hLS9jjG9B3j69luOPMA2y0u/kEvoDbl+lp0DA5t6w8ARENIp4qKXZJddZxnmD5jo7wBKg7CLrk2+u+cNLUNs6peAdXxNf3Y4Q264sTj5PwSEsdFsGHBP/k2KcetH2/rIn5/ph2nS1p8AAwCbD1ijbePFdwAAAABJRU5ErkJggg==';
-        this.sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAAgCAMAAADKd1bWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1QTlDNDg4ODQyREYxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1QTlDNDg4NzQyREYxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkE4MEI1QTRGQzY5RDQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4aaEb1AAAAFVBMVEX/5Kz4+PgA7NwAeP////8AAAD////k94KTAAAAB3RSTlP///////8AGksDRgAAApFJREFUeNrsmAmOwyAMRdk+9z/yBEzYDSFdRJVB7WgaQhQ/fy8g7MOH+AfwxQGLYzwRgLeazI8INiHxFQDQGjaaTwjo2jMAHLY6awsA4dpzAKAcB40HAfBy9wiE/7iv/skQuJ3FSfBSCCmlh7BLACwBqLL4KgEF6VwvZQCwSTkU1x1cZvFFgUBFAEJAbWN/BmDq4AmAyXooCOlDwAFQ27RD4rKDMQMwW68oAe5l/yKAmMVvRYgCPWMn+xMAzA3Isvi6QCgNkP3bAkhluuviLItjWSBEgMZO+yHRdbDzFQuACeKxQH4CQHLw8Y5tnSqyeGtEIZB+jOwLwHfnhYN7nYq3DGR/a0WxvlWQu6jD2A4A7VaKMq37BESY7gHI1zerXSsYCbwbgDnG6wByB8P2JeAHo4+0ngCUd7glgcD7Q8A4Bq8rQEUHMwCOvOC1z8gDSSDtZpfWhDyAt9sf/txQhcj9ExyswvlNb1fr3d/bysZNf5dfYoaPADAtgJbJqAoQAcpu4fiGafY0s5UFhbejp+j4p5kkAPojAEwHwCUCIt+vWoQ0Be64Aoo7yjgBaL/Vqx4QAiDlm/dJn7PTXIyBvBOMxQrsgQVUv0nKemGPoX5AOgterwKsHSWAeFsw3JglBWS9msuHbLVCt8hXtf4seIxQFgWQAJh65HKPP41N/y0CAGVCUgEXBHwlx5lJBw+4BcD0s3oFwJpqYiUJFrkaXgWsm3l1nBMhDXD3gG9nKtdmBOgbZk8kVcarli8DiOV7eOwH7kQ7mxgcK7EA4oubpoKVhnkAVe031Xp7uTUSTR6fKBSj6L62HDMBNC8fLmbztVCKebPQG4vOkcbYgumRmJ2tH7X0zMubfL7v3GXTafwJMACroLIQuZ9hvQAAAABJRU5ErkJggg==';
+        this.sprite.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAAgCAMAAADKd1bWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNDgwMTE3NDA3MjA2ODExODIyQURCQTYzNTIyMEM3QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxQTRFRjc0RTQzQUMxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxQTRFRjc0RDQzQUMxMUU1QjgzMzkyMERFQzhDOTlBMSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MzgwQTE4Q0JEMzIwNjgxMTgyMkE4MEI1QTRGQzY5RDQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDQ4MDExNzQwNzIwNjgxMTgyMkFEQkE2MzUyMjBDN0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5xOwv5AAAAGFBMVEXA3YstNhlSdCSTuWNScyMuNxn///////9VqbdPAAAACHRSTlP/////////AN6DvVkAAAPoSURBVHja5JmLcqUgDIaDEHj/N97cgKCgx84pO7PrtOciasmXPwmhUP75I8qR5LDv8pnPlgL/gf1kq9hrb8bCCGwFEItS321/NVheQ/vCP3EPAEQz/6DDEMi5TQAIewjq+yAYQggmgi0AEACLmV8R6LktAAJZrwdZTADc17QFANnK1jb7iUA9twGAuFus5ZfASgimARqDXQAQnf0MALcCsMhXEtHSQGA1bAsBYAAgPwfhgG0hkBwBkYGEgJ5lCWzJ4ir4DJBzZgjbAoABBJN+kAyon+vbKwWcsvhrDWBGfskGYI/9WgXU80nNZgXUaBgBPDh4zOIvBYLYADCLbfaXmFz0G4DUy4BLgo8OHrL4a4EQAMgSAgwAd9lfUksCIgEBEFNNCdEDeHDwmMXfC4QJoCb/jfbXJOAOWRcBmQ5jGXxwcBmy+HuBaBQYhY32F2gr/5b5qCki95M6yH741MFkgMvi7wVSAYj9OwGQzFPtB9wSsAYBTB08naHP4vhaIF0Ce+0nAlxzuReEugbWBpneIQSYOng6SZ/Fp8N3AvmLAFjqNQi0CsZKIIwAnINZqtda7rM43goE78zfDiDWDjimEkrtiwlIqQB4TqODZysVtJG5FeP91+HYj605sPj+H/rugGAomgO0Ng0OhjkBgGY/3gnkcjdydfwtAPRn82ps7P91Q8giIPIWWQcwOLjMJVCP6UrW33/hh4cj8HUAzGC9FLbcJ3mfvhaNflkZRa8AdA6eAkDo9k/pOIHMABw88AsAcnuZqILst7W/bAZxDPgNESuD6JTNk0RNC7OORny8CI+e5M4A1P6aC74PIF8BGJNYtPmRZXC0SuAkAdfpywznKwGBA4sA6P6X+y/2G4DjVwDkCQD5VY8nYyC7QDMA6t2ClqsRbboXM6MQwHIDQO4fH2ABUD/iF6U/UX8LgVwVIO6XTqhukusOgd8QUZdhs38+TQYQ53XcCYguOT2gVY3lk+9y/EcA2mWmhpy7AlLdEpQkCCn0wgCTYl337+ZREFcEhlq/esAPBNAB5PPh5d6+5tI/dQC1/yfLIdn+yAUAx2cUE2mWqyBYsrFaj7cP+BGAPK/1JwAlnwZyLYM97VM/QItBa4WC9MXXWsWOPNYL1jWBJm9W0OIBNwAmrnUE9NdGK5JTxjvdnmsfIP1/0P6f1wHWEqXz/wUkdR3zEji56mZg/YA1gDbxnM95bTRMAJxqfz7d39/qhpBui1Kadp1RWwh51z4pFO+i+7Pb8UkAl7xnJ934WSjD+DjW/ieoRdBtD3BGgMlC996C1SUftno3FywioC/2Vnzu77alP+cCSMP2AO/d/RFgAI4xu7IsDOOlAAAAAElFTkSuQmCC";
         this.frameSize = new _Vector2Js2["default"](32, 32);
         this.totalFrames = 4; // 5 with 0 based index
         this.frameIndex = 0;
@@ -1423,10 +1441,15 @@ var SpriteRenderer = (function (_Component) {
         this.ticksPerFrame = 12;
 
         this.patternCanvas = document.createElement('canvas');
-        this.patternCanvas.width = 8;
-        this.patternCanvas.height = 8;
+        this.patternCanvas.width = this.frameSize.x * 2;
+        this.patternCanvas.height = this.frameSize.y * 2;
         this.patternContext = this.patternCanvas.getContext('2d');
-        this.patternContext.drawImage(this.sprite, this.frameSize.x * .5, this.frameSize.y * .5, 8, 8, 0, 0, 8, 8);
+
+        this.patternContext.webkitImageSmoothingEnabled = false;
+        this.patternContext.mozImageSmoothingEnabled = false;
+        this.patternContext.imageSmoothingEnabled = false;
+
+        this.patternContext.drawImage(this.sprite, this.frameSize.x * this.tiledIndex, 0, this.frameSize.x, this.frameSize.y, 0, 0, this.frameSize.x * 2, this.frameSize.y * 2);
 
         this.alpha = 1;
 
@@ -1466,13 +1489,13 @@ var SpriteRenderer = (function (_Component) {
                 ctx.drawImage(_this.sprite, _this.animations[_this.currentAnimation].frames[_this.frameIndex] * _this.frameSize.x, 0, _this.frameSize.x, _this.frameSize.y, t.position.x, t.position.y, t.size.x, t.size.y);
             }
             if (_this.tiled) {
-                //ctx.save();
+                ctx.save();
                 ctx.translate(t.position.x, t.position.y);
                 var finalPattern = ctx.createPattern(_this.patternCanvas, "repeat");
                 ctx.fillStyle = finalPattern;
                 ctx.fillRect(0, 0, t.size.x, t.size.y);
-                //ctx.restore();
-                ctx.translate(-t.position.x, -t.position.y);
+                ctx.restore();
+                //ctx.translate(-t.position.x, -t.position.y);
             }
             ctx.globalAlpha = 1;
         };

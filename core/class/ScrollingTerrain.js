@@ -13,7 +13,7 @@ export default class ScrollingTerrain extends Component{
             // no link yet and on screen
             if ( this.link === null && this.gameObject.name === "Platform" && this.gameObject.transform.position.x > -50 ){
 
-                var newSize = new Vector2(this.RandomRange(80,320),200),
+                var newSize = new Vector2(this.RandomRangePlatformSize(64,384,64),200),
                     newPositionX = this.gameObject.transform.position.x - newSize.x - this.RandomRange(150,50),
                     newPositionY = this.gameObject.transform.position.y + this.RandomRange(30,-30);
 
@@ -49,6 +49,10 @@ export default class ScrollingTerrain extends Component{
         };
         this.RandomRange = (max, min)=>{
             return (Math.floor(Math.random()* (max - min)) + min)
+        };
+        this.RandomRangePlatformSize = (max, min, roundTo)=>{
+            var x = (Math.floor(Math.random()* (max - min)) + min);
+            return x - x % roundTo;
         };
     }
 }
