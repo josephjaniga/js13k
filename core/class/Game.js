@@ -24,6 +24,9 @@ export default class Game {
     constructor(options) {
         //console.log("Game | constructor");
 
+        // camerashake?
+        this.shakeFrames = 0;
+
         this.startTime = new Date();
 
         this.hasStarted = false;
@@ -49,6 +52,8 @@ export default class Game {
 
         // METHODS
         this.Update = ()=> {
+
+
             if ( !this.hasStarted && Input.instance.isSpaceDown ){
                 this.StartGame();
                 this.hasStarted = true;
@@ -58,8 +63,16 @@ export default class Game {
                     el.Update();
                 });
             }
+
+
+
         };
         this.Draw = ()=> {
+
+            if ( this.shakeFrames > 0){
+                this.CTX.save();
+                this.CTX.translate(Math.random()*3-1.5, Math.random()*3-1.5);
+            }
 
             this.CTX.imageSmoothingEnabled = false;
 
@@ -67,6 +80,12 @@ export default class Game {
             this.objs.forEach((el)=> {
                 el.Draw(this.CTX);
             });
+
+            if ( this.shakeFrames > 0){
+                this.CTX.restore();
+                this.shakeFrames--;
+            }
+
         };
         this.Loop = ()=> {
             this.Update();

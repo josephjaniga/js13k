@@ -120,7 +120,10 @@ export default class PhysicsBody extends Component {
                     this.hitSound.pause();
                     this.hitSound.currentTime = 0;
                     this.hitSound.playbackRate = Math.random() * (2.5 - 0.75) + 0.75;
-                    this.hitSound.play();
+                    this.hitSound.play()
+
+                    // camera shake
+                    Game.instance.shakeFrames = 5;
 
                     // spawn a particle
                     var jumpParticle = new GameObject();

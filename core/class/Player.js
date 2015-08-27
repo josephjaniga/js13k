@@ -38,6 +38,9 @@ export default class Player extends Component{
                 this.speedSound.pause();
                 this.speedSound.currentTime = 0;
                 this.speedSound.play();
+
+                // camerashake
+                Game.instance.shakeFrames = 5;
             }
         };
 
@@ -78,6 +81,9 @@ export default class Player extends Component{
             this.deathSound.pause();
             this.deathSound.currentTime = 0;
             this.deathSound.play();
+
+            // camera shake
+            Game.instance.shakeFrames = 120;
 
             //Game.instance.paused = true;
 
