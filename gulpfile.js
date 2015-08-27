@@ -80,7 +80,7 @@ gulp.task('buildCore', function() {
         //.pipe(minify({
         //    ignoreFiles: ['min.js']
         //}))
-        .pipe(uglify({mangle: false}))
+        .pipe(uglify({mangle: true}))
         .pipe(gulp.dest(CORE_DEST))
         .pipe(gulp.dest(DEV_CORE_DEST));
 });

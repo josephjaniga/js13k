@@ -5,6 +5,7 @@ import Vector2 from "./Vector2.js";
 export default class ScrollingTerrain extends Component{
     constructor(options){
         super(options);
+        this.componentName = "ScrollingTerrain";
         //console.log("ScrollingTerrain | constructor");
         this.speed = options.speed || 2.5;
         this.link = null;

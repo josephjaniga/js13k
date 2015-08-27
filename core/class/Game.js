@@ -2,6 +2,7 @@ import Collider from "./Collider.js";
 import Component from "./Component.js";
 import DestroyOnSpace from "./DestroyOnSpace.js";
 import GameObject from "./GameObject.js";
+import ImageRenderer from "./ImageRenderer.js";
 import Input from "./Input.js";
 import Jump from "./Jump.js";
 import Particle from "./Particle.js";
@@ -42,6 +43,9 @@ export default class Game {
         this.objs = [];
 
         this.speed = 2;
+
+        this.logo = new Image();
+        this.logo.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIUAAAA3BAMAAADQ9pRxAAAAD1BMVEUAAAAtNhlScyPA3YuTuWMW5n24AAAAAXRSTlMAQObYZgAABClJREFUSMfclIGRayEIRXc7WNAGMGmAYANG+q/p34tvkuxsB5+ZyFPhcFEnX/+dyct+vs74Yd/Cn1yRP58bsNf3H/tEvPE1uRZehX+pMA7vhCsX7gPMnSvg+40udosIk6BzCRgSuIgd0cPuh/vXiiGyN9N60LyAzCbSAyO/wSD3t9jmHC9GTIT3XcnaMhMojTKV3LdbaK821Lw7ycxmBDBshQJygpGwLdqX9H3kgKpGJBheDA2pUpPiaBdjxqkMs+aoOKyDMROsw+hgBPfhMGdV1wYSGVcrS2T6GMOEDB2jIyRliIQKDYxNPwqlWJDRFpRfjLan2GGIbVfBRwPDdFjbqkST4cVwzLmOT97Wxeh7KZQjxNR4mCwPxgIzqrralp5kGMXByFA3ZVodhy9VI4MH6dacRwWpiF1k+BCIyCAsEQPf3CFJ3oxYohILv7jVG4OqhTyWDQxEPyz3ESR3LLFID9HeD6NTPxvSgHmrEeGdDHZYC9Z3XAzWmYJGHWnFUDIGGX3PJGNmouRNEnMvMbnRT7IuJN93BnjDMNy3fDCeS00SwSgBM+EsJwTJYUAIGAEGogJ+dG7U38WbgbQOhvenEYOQmNSbS9IVUqMYsnKBIYMlL4ZcjHOpK+gBsY1yGQ49KhsMyYsBO2I3axTD98UQUTKUHjbzxi0DuTOENwMvyjc24dnLi8GHO+sZKnXQmraZhkoQAEjdCUjwgA1tnOdTmp9erLHp+RDMwWiEeV+3SS2HaGRACC+dRgZ6W9IuHaOHe5/1MB6xegS22jMm8NSqd7E6Q5zqPoxBRlt1T2QItpCd3oO2aja1M7seJwT5YUiS0dABlNth+GEgMhyMnJuMSeKDSouhOdskSxkIMIIylkiQwTdWDE0YGDkzVZIe6XIY41/tZYCjQAxC0XgDIXsB2Kvs/c+0fL6FEmsmmcSvjg6lDzqCHaMKwiS5mGD85s8dGlkW44Fy0BiQJfwmWraLRo2AAWgEdvbhD+JFRcLSDBdIPWSsDRXPI/IouLrFQdkKUSO4tn+5N3CyhQGKUaJgobvTkIsBg34KNmJw+2MmHEvPPEW587wZhkMqT3Tbo0xaJOKNnyi+Y4aYmZvRE+xPW7YyD7ikGI6MXWawQ3LUc7IZjKhp3xN5jJkY5Jx2bRQ3cI5TNL5cxt3GilHBeOzz5+GGplI+CsFL06mWUDoj5CCC5FpcwllM/a6sEhEIRee0sSwupTYYbDGLlwMgRWiWz87L4n9j4KVg1NhqCgaNh4fU0o8+Nq6HMxftcSj8zclYk9LDi9HfC5tHNZ/b9ciY1YbFcGnGbBeLMRWbeTA+KUaDTcZeOfrqdczaGdqXFQbka95xqrZJUObqOhlVCTmeuRI3q53rJQPLbYa4F8MXI0Xo4Z/BxxpTH7ZT08kNETF1G3CtmvFl/QOLpEU6gnTAeQAAAABJRU5ErkJggg==";
 
         // METHODS
         this.Update = ()=> {
@@ -194,49 +198,21 @@ export default class Game {
         };
         this.SpawnStartMenu = ()=>{
             // setup the title text
-            var title = new GameObject();
-                title.transform = new Transform({
-                    position: new Vector2(
-                            this.resolution.x/2,
-                            this.resolution.y/2-50
-                        ),
-                    size: Vector2.zero()
-                });
-                title.AddComponent(new TextRenderer(
-                    {
-                        text: 'Reversed'.split("").reverse().join(""),
-                        font: '30px sans-serif',
-                        fontWeight: 'bolder',
-                        textAlign: 'center',
-                        fillStyle: 'white'
-                    }
-                ));
-                title.AddComponent(new DestroyOnSpace());
-                this.objs.push(title);
-
-            // setup the title text
-            var subtitle = new GameObject();
-                subtitle.transform = new Transform({
-                    position: new Vector2(
-                            this.resolution.x/2,
-                            this.resolution.y/2-35
-                    ),
-                    size: Vector2.zero()
-                });
-                subtitle.AddComponent(new TextRenderer(
-                    {
-                        text: 'Press Space to Start'.split("").reverse().join(""),
-                        font: '8px sans-serif',
-                        fontWeight: 'bolder',
-                        textAlign: 'center',
-                        fillStyle: 'white'
-                    }
-                ));
-                subtitle.AddComponent(new DestroyOnSpace());
-                this.objs.push(subtitle);
+            var title = new GameObject(),
+                size = new Vector2(166,59);
+            title.transform = new Transform({
+                size: size,
+                position: new Vector2(
+                        this.resolution.x/2 - size.x/2,
+                        this.resolution.y/2 - size.y/2 - 50
+                    )
+            });
+            title.AddComponent(new ImageRenderer({}));
+            title.name = "Logo";
+            title.AddComponent(new DestroyOnSpace());
+            this.objs.push(title);
         };
-        this.SpawnParallax = ()=> {
-
+        this.SpawnParallax = ()=>{
             var stars = new GameObject();
             stars.transform = new Transform({
                 position: Vector2.zero(),

@@ -19,6 +19,8 @@ export default class PhysicsBody extends Component {
     constructor(options){
         super(options);
 
+        this.componentName = "PhysicsBody";
+
         //console.log("player spawned - added PB");
         this.gravity = new Vector2(0,0.3);
         this.velocity = Vector2.zero();

@@ -11,6 +11,8 @@ export default class Player extends Component{
     constructor(options){
         super(options);
 
+        this.componentName = "Player";
+
         this.lastBump = Date.now();
         this.timeStep = 10000; // ten seconds
         this.speedStep = 0.25;
