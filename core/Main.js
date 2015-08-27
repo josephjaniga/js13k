@@ -7,6 +7,7 @@ import Jump from "./class/Jump.js";
 import PhysicsBody from "./class/PhysicsBody.js";
 import Rect from "./class/Rect.js";
 import RectRenderer from "./class/RectRenderer.js";
+import ScoreDisplay from "./class/ScoreDisplay.js";
 import ScrollingTerrain from "./class/ScrollingTerrain.js";
 import SpriteRenderer from "./class/SpriteRenderer.js";
 import Transform from "./class/Transform.js";
@@ -509,3 +510,8 @@ _game.SetCanvas(options);
 _game.init();
 _input.Attach();
 _game.Loop();
+
+var clock = new GameObject();
+clock.AddComponent(new ScoreDisplay());
+clock.name = "Clock";
+_game.objs.push(clock);

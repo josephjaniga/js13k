@@ -29,6 +29,9 @@ export default class Player extends Component{
         this.speedSound.currentTime = 0;
         this.speedSound.play();
 
+        Game.instance.startTime = Date.now();
+        Game.instance.currentScore = 0;
+
         this.Update = ()=>{
             if ( this.lastBump + this.timeStep <= Date.now() ){
                 this.lastBump = Date.now();
@@ -42,6 +45,8 @@ export default class Player extends Component{
                 // camerashake
                 Game.instance.shakeFrames = 5;
             }
+
+            Game.instance.currentScore = (Date.now() - Game.instance.startTime) / 1000;
         };
 
         this.Die = ()=>{

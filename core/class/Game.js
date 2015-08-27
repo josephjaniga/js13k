@@ -11,6 +11,7 @@ import PhysicsBody from "./PhysicsBody.js";
 import Player from "./Player.js";
 import Rect from "./Rect.js";
 import RectRenderer from "./RectRenderer.js";
+import ScoreDisplay from "./ScoreDisplay.js";
 import ScrollingTerrain from "./ScrollingTerrain.js";
 import SpriteRenderer from "./SpriteRenderer.js";
 import TextRenderer from "./TextRenderer.js";
@@ -27,10 +28,11 @@ export default class Game {
         // camerashake?
         this.shakeFrames = 0;
 
-        this.startTime = new Date();
-
         this.hasStarted = false;
         this.paused = false;
+
+        this.startTime = new Date();
+        this.currentScore = 0;
 
         this.color = {
             black: "rgba(0,0,0,0)",
@@ -53,7 +55,6 @@ export default class Game {
         // METHODS
         this.Update = ()=> {
 
-
             if ( !this.hasStarted && Input.instance.isSpaceDown ){
                 this.StartGame();
                 this.hasStarted = true;
@@ -63,8 +64,6 @@ export default class Game {
                     el.Update();
                 });
             }
-
-
 
         };
         this.Draw = ()=> {
@@ -100,13 +99,15 @@ export default class Game {
             this.hasStarted = false;
             if ( options === "NonPlayer" ){
                 this.objs.forEach((obj)=>{
-                    if ( obj.name !== "Player" ){
+                    if ( obj.name !== "Player" && obj.name !== "Clock"  ){
                         obj.Destroy();
                     }
                 });
             } else {
                 this.objs.forEach((obj)=>{
-                    obj.Destroy();
+                    if ( obj.name !== "Clock" ){
+                        obj.Destroy();
+                    }
                 });
             }
         };
@@ -119,15 +120,24 @@ export default class Game {
             this.objs = [];
             this.ResizeCanvas(this.resolution.x * this.scale, this.resolution.y * this.scale);
             this.CTX.scale(this.scale, this.scale);
+
             // setup
             this.SpawnParallax();
             this.SpawnStartMenu();
+
+            var clock = new GameObject();
+            clock.AddComponent(new ScoreDisplay());
+            clock.name = "Clock";
+            this.objs.push(clock);
+
         };
         this.StartGame = ()=>{
             Game.instance.SetScrollingTerrainSpeed(2.5);
             this.SpawnPlayer(new Vector2(250, 130), new Vector2(18, 18));
             this.SpawnPlatform(new Vector2(0,150), new Vector2(500,200));
             this.SpawnCatch();
+            this.startTime = new Date();
+            this.currentScore = 0;
         };
         this.SetCanvas = (options)=>{
             this.canvas = options.canvas;
