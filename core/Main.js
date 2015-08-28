@@ -518,11 +518,11 @@ _game.objs.push(clock);
 
 
 // 37 seconds
-var rickRolled = "(t<<3)*[8/9,1,9/8,6/5,4/3,3/2,0][[0xd2d2c8,0xce4088,0xca32c8,0x8e4009][t>>14&3]>>(0x3dbe4688>>((t>>10&15)>9?18:t>>10&15)*3&7)*3&7]&255";
-//var musicFormula = "((t*5&t>>7)|(t*3&t>>10))&255";
+//var rickRolled = "(t<<3)*[8/9,1,9/8,6/5,4/3,3/2,0][[0xd2d2c8,0xce4088,0xca32c8,0x8e4009][t>>14&3]>>(0x3dbe4688>>((t>>10&15)>9?18:t>>10&15)*3&7)*3&7]&255";
+var musicFormula = "((t*5&t>>7)|(t*3&t>>10))&255";
 //var formula2 = '((t*("36364689"[t>>13&7]&15))/12&128)+(((((t>>12)^(t>>12)-2)%11*t)/4|t>>13)&127)';
 var softSynth = function(f){return eval("for(var t=0,S='RIFF_oO_WAVEfmt "+atob('EAAAAAEAAQBAHwAAQB8AAAEACAA')+"data';++t<3e5;)S+=String.fromCharCode("+f+")")};
-var a = new Audio( 'data:audio/wav;base64,'+btoa( softSynth( rickRolled ) ) );
+var a = new Audio( 'data:audio/wav;base64,'+btoa( softSynth( musicFormula ) ) );
 a.volume = 0.04;
 a.play();
 
