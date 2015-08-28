@@ -526,8 +526,15 @@ var a = new Audio( 'data:audio/wav;base64,'+btoa( softSynth( musicFormula ) ) );
 a.volume = 0.04;
 a.play();
 
+setInterval(function(){
+    a.pause();
+    a.currentTime = 0;
+    a.play();
+}, 38000)
+
+
 //var a = document.createElement("audio");
-//a.src = 'data:audio/wav;base64,'+btoa( softSynth( rickRolled ) );
+//a.src = 'data:audio/wav;base64,'+btoa( softSynth( musicFormula ) );
 //a.controls = true;
 //a.volume = 0.025;
 //document.body.appendChild(a);
