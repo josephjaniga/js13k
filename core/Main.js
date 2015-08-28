@@ -506,15 +506,15 @@ var canvas = document.getElementById("view"),
     options = {"canvas": canvas},
     _game = Game.instance;
 
-//_game.SetCanvas(options);
-//_game.init();
-//_input.Attach();
-//_game.Loop();
-//
-//var clock = new GameObject();
-//clock.AddComponent(new ScoreDisplay());
-//clock.name = "Clock";
-//_game.objs.push(clock);
+_game.SetCanvas(options);
+_game.init();
+_input.Attach();
+_game.Loop();
+
+var clock = new GameObject();
+clock.AddComponent(new ScoreDisplay());
+clock.name = "Clock";
+_game.objs.push(clock);
 
 
 // 37 seconds
