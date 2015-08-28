@@ -526,11 +526,6 @@ var a = new Audio( 'data:audio/wav;base64,'+btoa( softSynth( rickRolled ) ) );
 a.volume = 0.04;
 a.play();
 
-setInterval(()=>{
-    a.currentTime = 0;
-    a.play();
-}, 8150);
-
 //var a = document.createElement("audio");
 //a.src = 'data:audio/wav;base64,'+btoa( softSynth( rickRolled ) );
 //a.controls = true;
