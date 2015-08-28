@@ -515,3 +515,9 @@ var clock = new GameObject();
 clock.AddComponent(new ScoreDisplay());
 clock.name = "Clock";
 _game.objs.push(clock);
+
+
+// background music
+var softSynth = function(f){for(var t=0,S='RIFF_oO_WAVEfmt '+atob('EAAAAAEAAQBAHwAAQB8AAAEACAA')+'data';++t<3e5;)S+=String.fromCharCode(eval(f));return S};
+
+new Audio( 'data:audio/wav;base64,'+btoa( softSynth( 'HERE_BE_CRAZY_FORMULA' ) ) ).play();

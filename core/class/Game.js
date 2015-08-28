@@ -32,7 +32,7 @@ export default class Game {
         this.paused = false;
 
         this.startTime = new Date();
-        this.currentScore = 0;
+        this.currentScore = 144;
 
         this.color = {
             black: "rgba(0,0,0,0)",

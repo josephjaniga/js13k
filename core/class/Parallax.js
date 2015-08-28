@@ -6,7 +6,6 @@ export default class Parallax extends Component{
     constructor(options){
         super(options);
 
-
         this.size = options.size;
 
         this.DrawPatternContext = ()=>{
@@ -35,25 +34,15 @@ export default class Parallax extends Component{
         this.translation = options.translation || 0;
 
         this.Update = ()=>{
-
             this.currentFrame++;
-
-            //if ( this.currentFrame === this.tickFrames ){
-            //    this.translation += this.tickPixels;
-            //    this.currentFrame = 0;
-            //}
-
             this.translation += this.tickPixels/this.tickFrames;
-
             this.DrawPatternContext();
-
         };
 
         this.Draw = (ctx)=>{
 
             var t = this.gameObject.transform;
-            var finalPattern = ctx.createPattern(this.patternCanvas, "repeat");
-            ctx.fillStyle = finalPattern;
+            ctx.fillStyle = ctx.createPattern(this.patternCanvas, "repeat");
 
             if ( this.repeat ){
                 ctx.save();

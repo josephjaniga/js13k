@@ -50,11 +50,6 @@ export default class Player extends Component{
         };
 
         this.Die = ()=>{
-            var p = this.gameObject.transform.position,
-                s = this.gameObject.transform.size,
-                max = 2,
-                min = 0;
-
             for( var i=0; i<50; i++ ){
                 var size = this.gameObject.transform.size.x,
                     rX = ((Math.random()*2) -1) * size,

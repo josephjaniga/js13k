@@ -18,16 +18,19 @@ export default class ScoreDisplay extends Component{
         this.outputSize = new Vector2(6,8);
 
         this.Update = ()=>{
-            var g = Game.instance,
-                s = 1000,
-                m = s * 60,
-                minutes = (g.currentScore / m)|0,
-                seconds = g.currentScore % m;
 
-            this.tensMinutes = (minutes/10)|0;
-            this.minutes = (minutes%10)|0;
-            this.tensSeconds = (seconds/10)|0;
-            this.seconds = (seconds%10)|0;
+            var g = Game.instance,
+                totalSeconds = g.currentScore,
+                totalMinutes = (totalSeconds / 60)|0,
+                remainingSeconds = (totalSeconds - totalMinutes*60)|0,
+                timeString = "" +
+                        (totalMinutes < 10 ? '0' + totalMinutes : totalMinutes )+ ":" +
+                        (remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds);
+
+            this.tensMinutes = timeString.charAt(0);
+            this.minutes = timeString.charAt(1);
+            this.tensSeconds = timeString.charAt(3);
+            this.seconds = timeString.charAt(4);
         };
 
         this.Draw = (ctx)=>{
