@@ -1,6 +1,5 @@
 node_modules/
 .idea/
 build/
-zip/
 .env.json
 .DS_Store
