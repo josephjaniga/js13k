@@ -73,6 +73,9 @@ export default class Game {
                 this.CTX.translate(Math.random()*3-1.5, Math.random()*3-1.5);
             }
 
+            this.CTX.mozImageSmoothingEnabled = false;
+            this.CTX.webkitImageSmoothingEnabled = false;
+            this.CTX.msImageSmoothingEnabled = false;
             this.CTX.imageSmoothingEnabled = false;
 
             this.CTX.clearRect(0, 0, this.canvas.width, this.canvas.height);

@@ -6,10 +6,8 @@
 
 var babelify    = require('babelify'),
     browserify  = require('browserify'),
-    uglifyify   = require('uglifyify'),
     del         = require('del'),
     gulp        = require('gulp'),
-    minify      = require('gulp-minify'),
     minifyHTML  = require('gulp-minify-html'),
     size        = require('gulp-size'),
     watch       = require('gulp-watch'),

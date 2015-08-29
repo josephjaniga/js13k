@@ -26,7 +26,9 @@ export default class Player extends Component{
         this.speedSound = new Audio(this.soundSource);
 
         this.speedSound.pause();
-        this.speedSound.currentTime = 0;
+        if ( this.speedSound.currentTime != 0 ){
+            this.speedSound.currentTime = 0;
+        }
         this.speedSound.play();
 
         Game.instance.startTime = Date.now();
