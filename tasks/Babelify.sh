@@ -11,7 +11,7 @@
 
 ./tasks/Template.sh
 
-zip ./build/temp/pack.zip ./build/temp/index.html
+zip ./build/temp/js13k-2015_desreveR_joseph_janiga.zip ./index.html
 
 wc -c ./build/temp/index.html
-wc -c ./build/temp/pack.zip
+wc -c ./build/temp/js13k-2015_desreveR_joseph_janiga.zip
