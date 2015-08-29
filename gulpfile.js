@@ -6,6 +6,7 @@
 
 var babelify    = require('babelify'),
     browserify  = require('browserify'),
+    uglifyify   = require('uglifyify'),
     del         = require('del'),
     gulp        = require('gulp'),
     minify      = require('gulp-minify'),
@@ -56,6 +57,8 @@ gulp.task('cleanBuild', function(cb){
     del(['build/*'], cb);
 });
 
+
+
 gulp.task('buildIndex', function() {
     return gulp.src(INDEX_SOURCE)
         .pipe(minifyHTML({conditionals:true, spare:true}))
@@ -65,13 +68,15 @@ gulp.task('buildIndex', function() {
 gulp.task('buildCore', function() {
     //del(["core/core.es5*"]);
     var bundler = browserify({
-            entries: "./core/Main.js",
             debug: false
-        }).transform(babelify, {});
+        })
+
+    bundler.add("./core/Main.js")
+        .transform(babelify, {});
 
     bundler.bundle()
         .pipe(source('core.es5.js'))
-        .pipe(gulp.dest(CORE_DEST))
+        //.pipe(gulp.dest(CORE_DEST))
         .pipe(gulp.dest(DEV_CORE_DEST));
 
     return bundler.bundle()
@@ -80,8 +85,12 @@ gulp.task('buildCore', function() {
         //.pipe(minify({
         //    ignoreFiles: ['min.js']
         //}))
-        .pipe(uglify({mangle: true}))
-        .pipe(gulp.dest(CORE_DEST))
+        .pipe(uglify({
+            //mangle: true,
+            //output: {},
+            //compress: {}
+        }))
+        //.pipe(gulp.dest(CORE_DEST))
         .pipe(gulp.dest(DEV_CORE_DEST));
 });
 

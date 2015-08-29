@@ -4,11 +4,23 @@
   "description": "js13k 2015 compo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build",
+    "build": "exit 0",
+    "cleanup": "./tasks/CleanUp.sh",
+    "babelify": "./tasks/Babelify.sh",
+    "minify": "exit 0",
+    "template": "./tasks/Template.sh",
+    "minifyhtml": "exit 0",
+    "prebuild": "npm run cleanup",
+    "postbuild": "npm run minify",
+    "preminify": "npm run babelify",
+    "postbabelify": "npm run template",
+    "pretemplate": "npm run minifyhtml"
   },
   "author": "Joe Janiga",
   "repository": "",
   "devDependencies": {
+    "babel": "^5.8.23",
     "babelify": "^6.2.0",
     "browserify": "^11.0.1",
     "del": "^1.2.1",
@@ -21,6 +33,9 @@
     "gulp-uglify": "^1.3.0",
     "gulp-watch": "^4.3.5",
     "gulp-zip": "^3.0.2",
+    "minifyify": "^7.0.5",
+    "uglify-js": "^2.4.24",
+    "uglifyify": "^3.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }

@@ -499,7 +499,6 @@ window['jsfxr'] = function(settings) {
 }
 
 
-
 // setup the game and input
 var canvas = document.getElementById("view"),
     _input = Input.instance,
@@ -530,7 +529,7 @@ setInterval(function(){
     a.pause();
     a.currentTime = 0;
     a.play();
-}, 38000)
+}, 37500);
 
 
 //var a = document.createElement("audio");
